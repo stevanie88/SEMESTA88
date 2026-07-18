@@ -2,176 +2,271 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, shrink-to-fit=no">
 <title>Lucky Spin — Undian Berhadiah</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700;9..144,900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
   :root{
-    --plum-950:#1c0f26; --plum-900:#2a1636; --plum-800:#3a1f47;
-    --gold-500:#e3b23c; --gold-300:#f3d685; --maroon-500:#b23a52;
-    --cream-100:#f8efdd; --teal-500:#3f9483; --ink:#241226;
-    --font-display:'Fraunces', serif; --font-body:'Space Grotesk', sans-serif;
+    --hejo-950:#170a2e; --hejo-900:#24123f; --hejo-800:#341a5c;
+    --hejo-600:#6a26c9; --hejo-500:#8b3ce8; --hejo-300:#c896f7;
+    --yellow:#ffe000; --yellow-dark:#e0c400;
+    --cream:#ffffff; --ink:#0c1f13; --muted:#e3d3f7;
+    --font-body:'Poppins', sans-serif;
   }
   *{box-sizing:border-box;}
   body{
     margin:0; min-height:100vh;
-    background:
-      radial-gradient(circle at 15% 10%, rgba(227,178,60,0.10), transparent 40%),
-      radial-gradient(circle at 85% 90%, rgba(63,148,131,0.14), transparent 45%),
-      var(--plum-950);
-    color:var(--cream-100); font-family:var(--font-body);
-    display:flex; justify-content:center; padding:28px 14px 60px;
+    background-image:
+      radial-gradient(circle at 15% 0%, rgba(139,60,232,.18), transparent 45%),
+      radial-gradient(circle at 100% 100%, rgba(255,224,0,.08), transparent 40%),
+      linear-gradient(160deg, rgba(23,10,46,.72), rgba(23,10,46,.82) 55%, rgba(23,10,46,.72)),
+      url('https://i.postimg.cc/BQMsdnM3/image.png');
+    background-size:cover; background-position:center; background-attachment:fixed;
+    background-repeat:no-repeat;
+    color:var(--cream); font-family:var(--font-body);
+    display:flex; justify-content:center; align-items:center;
+    padding:32px 16px; overflow-x:hidden; position:relative;
   }
-  .app{width:100%; max-width:520px;}
-  .eyebrow{font-size:11px; letter-spacing:.18em; text-transform:uppercase; color:var(--gold-300); opacity:.85; margin:0 0 4px; text-align:center;}
-  h1.title{
-    font-family:var(--font-display); font-weight:900; font-size:clamp(28px,7vw,38px);
-    text-align:center; margin:0 0 26px; letter-spacing:-.01em;
-    background:linear-gradient(180deg, var(--gold-300), var(--gold-500));
-    -webkit-background-clip:text; background-clip:text; color:transparent;
-  }
-  input[type=text]{
-    width:100%; padding:11px 12px; border-radius:10px; border:1px solid rgba(227,178,60,.25);
-    background:var(--plum-950); color:var(--cream-100); font-family:var(--font-body); font-size:15px; margin-bottom:0;
-  }
-  input:focus{outline:2px solid var(--gold-500); outline-offset:1px;}
-  .btn{
-    font-family:var(--font-body); font-weight:700; font-size:14px; cursor:pointer; border:none;
-    border-radius:12px; padding:13px 18px; transition:.15s; width:100%; margin-top:14px;
-  }
-  .btn-primary{background:var(--gold-500); color:var(--ink); position:relative; overflow:hidden;}
-  .btn-primary:hover{background:var(--gold-300);}
-  .btn-primary::after{
-    content:''; position:absolute; top:0; left:-150%; width:55%; height:100%;
-    background:linear-gradient(115deg, transparent, rgba(255,255,255,.65), transparent);
-    transform:skewX(-20deg); animation:shineMove 2.4s ease-in-out infinite;
-  }
-  @keyframes shineMove{ 0%{left:-150%;} 55%{left:150%;} 100%{left:150%;} }
-  .btn-secondary{background:transparent; color:var(--gold-300); border:1px solid rgba(227,178,60,.35);}
-  .btn-secondary:hover{border-color:var(--gold-500);}
-  .btn:disabled{opacity:.55; cursor:not-allowed;}
 
-  .ticket{background:var(--cream-100); color:var(--ink); border-radius:14px; padding:20px; position:relative;}
-  .ticket:before, .ticket:after{content:''; position:absolute; top:50%; transform:translateY(-50%); width:20px; height:20px; background:var(--plum-950); border-radius:50%;}
-  .ticket:before{left:-10px;} .ticket:after{right:-10px;}
-  .ticket-dash{border-top:2px dashed rgba(36,18,38,.25); margin:14px -20px;}
-
-  .rgb-glow-wrap{
-    position:relative; border-radius:16px; padding:2.5px; margin-bottom:0;
-    background:linear-gradient(90deg,#ff3d5a,#ff9d3d,#f3e93d,#3dff8f,#3dc8ff,#8f3dff,#ff3d5a);
-    background-size:400% 400%; animation:rgbFlow 6s linear infinite;
-    box-shadow:0 0 18px rgba(227,178,60,.25);
+  /* ambient falling confetti/rain */
+  .rain{position:fixed; inset:0; pointer-events:none; overflow:hidden; z-index:0;}
+  .rain span{
+    position:absolute; top:-5%; width:6px; height:6px; border-radius:50%;
+    background:var(--yellow); opacity:.7; animation:fall linear infinite;
   }
-  @keyframes rgbFlow{ 0%{background-position:0% 50%;} 100%{background-position:400% 50%;} }
+  .rain span:nth-child(odd){background:var(--hejo-300); width:5px; height:5px;}
+  @keyframes fall{ to{ transform:translateY(115vh); opacity:0; } }
 
-  .wheel-wrap{position:relative; width:min(320px,80vw); height:min(320px,80vw); margin:6px auto 22px;}
+  .stage{
+    position:relative; z-index:1; width:100%; max-width:1000px;
+    display:flex; align-items:center; justify-content:center; gap:56px;
+  }
+
+  /* ---------- Wheel ---------- */
+  .wheel-col{display:flex; flex-direction:column; align-items:center; flex-shrink:0;}
+  .wheel-wrap{position:relative; width:min(400px,80vw); height:min(400px,80vw);}
+  .pointer{
+    position:absolute; top:-30px; left:50%; transform:translateX(-50%);
+    width:15%; min-width:46px; max-width:64px; z-index:6;
+    filter:drop-shadow(0 3px 6px rgba(0,0,0,.55));
+    animation:pointerBounce 1.3s linear infinite;
+  }
+  @keyframes pointerBounce{ 0%,100%{transform:translateX(-50%) translateY(0);} 50%{transform:translateX(-50%) translateY(-10px);} }
+  .wheel-outer-ring{
+    position:absolute; inset:0; border-radius:50%;
+    background:conic-gradient(from 0deg, var(--yellow), var(--hejo-500), var(--yellow));
+    box-shadow:0 20px 45px rgba(0,0,0,.55);
+    padding:8px;
+  }
   .wheel{
-    width:100%; height:100%; border-radius:50%; position:relative; overflow:hidden;
-    box-shadow:0 0 0 8px var(--plum-950), 0 0 0 11px var(--gold-500), 0 20px 40px rgba(0,0,0,.4);
+    position:relative; width:100%; height:100%; border-radius:50%; overflow:hidden;
+    box-shadow:inset 0 0 0 4px rgba(0,0,0,.3), 0 0 0 6px var(--hejo-950);
     transition:transform 4.5s cubic-bezier(.17,.85,.15,1);
+    background:var(--hejo-600);
   }
   .wheel-label{
-    position:absolute; left:50%; top:8%; transform-origin:0% 320%;
-    font-size:12px; font-weight:700; color:#fff; text-shadow:0 1px 3px rgba(0,0,0,.5);
-    width:110px; text-align:center; pointer-events:none;
+    position:absolute; left:50%; top:6%; transform-origin:0% 380%;
+    font-size:11.5px; font-weight:700; text-shadow:0 1px 2px rgba(0,0,0,.4);
+    width:120px; text-align:center; pointer-events:none;
   }
-  .pointer{
-    position:absolute; top:-6px; left:50%; transform:translateX(-50%);
-    width:0; height:0; border-left:12px solid transparent; border-right:12px solid transparent;
-    border-top:22px solid var(--gold-500); z-index:5; filter:drop-shadow(0 2px 3px rgba(0,0,0,.4));
-  }
+  .wheel-label span{ display:inline-block; }
   .hub{
     position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
-    width:16%; height:16%; border-radius:50%; background:radial-gradient(circle at 35% 30%, var(--gold-300), var(--gold-500));
-    box-shadow:0 3px 8px rgba(0,0,0,.4); z-index:4;
+    width:26%; height:26%; border-radius:50%; z-index:4;
+    background:radial-gradient(circle at 35% 30%, #fff, #f1e6fc);
+    box-shadow:0 0 0 5px var(--hejo-950), 0 4px 10px rgba(0,0,0,.5);
+    display:flex; align-items:center; justify-content:center; overflow:hidden;
   }
+  .hub img{ width:82%; height:82%; object-fit:contain; }
 
+  /* ---------- Form panel ---------- */
+  .panel{width:100%; max-width:340px;}
+  .panel h2{
+    font-size:clamp(18px,3.2vw,22px); font-weight:700; margin:0 0 18px; color:var(--cream); text-align:center;
+  }
+  .pill-group{
+    display:flex; align-items:stretch; border-radius:999px; overflow:hidden;
+    background:var(--cream); box-shadow:0 8px 22px rgba(0,0,0,.35);
+  }
+  .pill-group input[type=text]{
+    flex:1; min-width:0; border:none; outline:none; background:transparent;
+    padding:15px 18px; font-family:var(--font-body); font-size:14px; color:var(--ink);
+  }
+  .pill-group input::placeholder{color:#8b8b8b;}
+  .pill-group .btn-spin-pill{
+    border:none; background:var(--hejo-500); color:#fff; font-weight:700; letter-spacing:.04em;
+    padding:0 26px; cursor:pointer; text-transform:uppercase; font-size:13px; transition:.15s;
+  }
+  .pill-group .btn-spin-pill:hover{background:var(--hejo-600);}
+  .pill-group .btn-spin-pill:disabled{opacity:.5; cursor:not-allowed;}
+
+  #name-input{
+    width:100%; margin-top:12px; border-radius:999px; border:none; outline:none;
+    padding:14px 18px; font-family:var(--font-body); font-size:14px; color:var(--ink);
+    background:rgba(255,255,255,.92);
+  }
+  #name-input::placeholder{color:#8b8b8b;}
+
+  .btn-full{
+    font-family:var(--font-body); font-weight:700; font-size:14px; letter-spacing:.04em;
+    cursor:pointer; border:none; border-radius:999px; padding:15px 18px;
+    width:100%; margin-top:14px; text-transform:uppercase; transition:.15s;
+    background:var(--yellow); color:var(--ink); box-shadow:0 8px 20px rgba(0,0,0,.35);
+  }
+  .btn-full:hover{background:var(--yellow-dark);}
+  .btn-full:disabled{opacity:.5; cursor:not-allowed;}
+
+  .btn-secondary{
+    font-family:var(--font-body); font-weight:700; font-size:13px; letter-spacing:.04em;
+    cursor:pointer; border:1px solid rgba(255,255,255,.35); background:transparent; color:#fff;
+    border-radius:999px; padding:13px 18px; width:100%; margin-top:14px; text-transform:uppercase;
+  }
+  .btn-secondary:hover{border-color:var(--yellow);}
+
+  /* ---------- Toast-style message ---------- */
+  #msgbox{position:fixed; top:18px; right:18px; z-index:80; max-width:320px; width:calc(100% - 36px);}
+  .toast-msg{
+    display:flex; align-items:flex-start; gap:10px; padding:12px 14px; border-radius:10px;
+    font-size:13px; box-shadow:0 10px 26px rgba(0,0,0,.4); animation:toastIn .25s ease;
+    border-left:4px solid;
+  }
+  @keyframes toastIn{ from{transform:translateY(-10px); opacity:0;} to{transform:translateY(0); opacity:1;} }
+  .toast-msg.error{background:#3a1015; color:#ffb3bb; border-color:#e2352a;}
+  .toast-msg.ok{background:#0b3a1d; color:#9be8b4; border-color:var(--hejo-500);}
+
+  /* ---------- Modal ---------- */
   .modal-overlay{
-    position:fixed; inset:0; background:rgba(20,10,28,.78);
+    position:fixed; inset:0; background:rgba(3,15,8,.85);
     display:flex; align-items:center; justify-content:center;
     z-index:60; padding:20px; animation:fadeIn .25s ease;
   }
   @keyframes fadeIn{from{opacity:0} to{opacity:1}}
-  .modal-card{width:100%; max-width:360px; animation:popIn .5s cubic-bezier(.17,.85,.15,1);}
+  .modal-card{width:100%; max-width:340px; animation:popIn .5s cubic-bezier(.17,.85,.15,1);}
   @keyframes popIn{
     0%{transform:scale(.55) translateY(10px); opacity:0;}
     65%{transform:scale(1.06); opacity:1;}
     100%{transform:scale(1) translateY(0);}
   }
-  .confetti-row{font-size:26px; letter-spacing:6px; text-align:center; margin-bottom:2px; animation:confettiBounce 1s ease-in-out infinite alternate;}
+  .confetti-row{font-size:26px; letter-spacing:6px; text-align:center; margin-bottom:10px; animation:confettiBounce 1s ease-in-out infinite alternate;}
   @keyframes confettiBounce{ from{transform:translateY(0) rotate(-4deg);} to{transform:translateY(-6px) rotate(4deg);} }
   .result-banner{
-    text-align:center; padding:20px; border-radius:14px; margin-bottom:16px;
-    background:linear-gradient(135deg, var(--teal-500), #2b6e60); position:relative; overflow:hidden;
+    text-align:center; padding:28px 20px; border-radius:18px; margin-bottom:16px;
+    background:linear-gradient(155deg, var(--hejo-500), var(--hejo-800) 85%);
+    box-shadow:0 14px 30px rgba(0,0,0,.5); position:relative; overflow:hidden;
   }
   .result-banner::before{
     content:''; position:absolute; inset:0;
-    background:radial-gradient(circle at 30% 20%, rgba(255,255,255,.25), transparent 45%);
+    background:radial-gradient(circle at 30% 20%, rgba(255,255,255,.28), transparent 45%);
     animation:glowPulse 2.2s ease-in-out infinite;
   }
   @keyframes glowPulse{ 0%,100%{opacity:.5;} 50%{opacity:1;} }
-  .result-banner .prize-won{font-family:var(--font-display); font-weight:900; font-size:26px; margin:4px 0; position:relative;}
+  .result-banner .selamat{font-size:13px; letter-spacing:.1em; text-transform:uppercase; opacity:.9; position:relative; color:#fff;}
+  .result-banner .prize-won{font-weight:900; font-size:26px; margin:6px 0 0; position:relative; color:var(--yellow);}
 
-  .msg{font-size:13px; padding:10px 12px; border-radius:10px; margin-bottom:14px;}
-  .msg.error{background:rgba(178,58,82,.2); color:#f0a3b4; border:1px solid rgba(178,58,82,.4);}
-  .msg.ok{background:rgba(63,148,131,.2); color:#8fd4c3; border:1px solid rgba(63,148,131,.4);}
   .hidden{display:none !important;}
+
+  @media (max-width:760px){
+    .stage{flex-direction:column; gap:30px;}
+    .panel{max-width:340px;}
+  }
 </style>
 </head>
 <body>
-<div class="app">
-  <p class="eyebrow">Undian Kupon Emas</p>
-  <h1 class="title">Lucky Spin</h1>
 
-  <div id="msgbox"></div>
+<div class="rain" id="rain"></div>
 
-  <div id="spin-entry">
-    <div class="rgb-glow-wrap">
-      <div class="ticket">
-        <p class="eyebrow" style="text-align:left; margin-bottom:8px;">Masukkan Kode Undian</p>
-        <input type="text" id="code-input" placeholder="Contoh: LUCK-4821" style="text-transform:uppercase; margin-bottom:0;">
-        <div class="ticket-dash"></div>
-        <input type="text" id="name-input" placeholder="Nama kamu (opsional)" style="margin-bottom:0;">
-      </div>
-    </div>
-    <button class="btn btn-primary" id="btn-check-code">Cek &amp; Putar Roda</button>
-  </div>
+<div id="msgbox"></div>
 
-  <div id="spin-wheel-area" class="hidden">
+<div class="stage">
+
+  <div class="wheel-col">
     <div class="wheel-wrap">
-      <div class="pointer"></div>
-      <div class="wheel" id="wheel"></div>
-      <div class="hub"></div>
+      <img class="pointer" src="https://i.postimg.cc/pLHGYfDV/Chat-GPT-Image-17-Jul-2026-16-51-29.png" alt="pointer">
+      <div class="wheel-outer-ring">
+        <div class="wheel" id="wheel"></div>
+      </div>
+      <div class="hub">
+        <img src="https://i.postimg.cc/FRR0VRWr/Chat-GPT-Image-Jul-17-2026-12-13-52-PM.png" alt="logo">
+      </div>
     </div>
-    <button class="btn btn-primary" id="btn-spin-now">Putar Sekarang!</button>
   </div>
 
-  <div id="spin-result" class="hidden modal-overlay">
-    <div class="modal-card">
-      <div class="confetti-row">🎉 🎊 ✨ 🎊 🎉</div>
-      <div class="result-banner">
-        <div style="font-size:13px; opacity:.85; position:relative;">Selamat!</div>
-        <div class="prize-won" id="result-prize-name">-</div>
+  <div class="panel-col" style="display:flex; flex-direction:column; align-items:center;">
+
+    <div id="spin-entry" class="panel">
+      <h2>Masukkan Kode Voucher</h2>
+      <div class="pill-group">
+        <input type="text" id="code-input" placeholder="Kode Voucher" style="text-transform:uppercase;">
+        <button class="btn-spin-pill" id="btn-check-code">Spin</button>
       </div>
-      <button class="btn btn-secondary" id="btn-spin-again">Kembali</button>
+      <input type="text" id="name-input" placeholder="Nama kamu (opsional)">
     </div>
+
+    <div id="spin-wheel-area" class="panel hidden">
+      <h2>Siap Diputar!</h2>
+      <button class="btn-full" id="btn-spin-now">Putar Sekarang!</button>
+    </div>
+
+  </div>
+
+</div>
+
+<div id="spin-result" class="hidden modal-overlay">
+  <div class="modal-card">
+    <div class="confetti-row">🎉 🎊 ✨ 🎊 🎉</div>
+    <div class="result-banner">
+      <div class="selamat">Selamat!</div>
+      <div class="prize-won" id="result-prize-name">-</div>
+    </div>
+    <button class="btn-secondary" id="btn-spin-again">Kembali</button>
   </div>
 </div>
 
 <script>
 function showMsg(text, type){
   const box = document.getElementById('msgbox');
-  box.innerHTML = `<div class="msg ${type}">${text}</div>`;
+  box.innerHTML = `<div class="toast-msg ${type}">${text}</div>`;
   setTimeout(()=>{ box.innerHTML=''; }, 4000);
 }
+
+// default demo segments so the wheel is never plain before a code is checked
+const defaultPrizes = [
+  {id:'d1', name:'Hadiah Utama', weight:1, color:'#ffe000', textColor:'#000'},
+  {id:'d2', name:'10.000',       weight:1, color:'#17b34e', textColor:'#fff'},
+  {id:'d3', name:'500.000',      weight:1, color:'#ffffff', textColor:'#000'},
+  {id:'d4', name:'2.500.000',    weight:1, color:'#17b34e', textColor:'#fff'},
+  {id:'d5', name:'Hadiah Spesial',weight:1, color:'#ffe000', textColor:'#000'},
+  {id:'d6', name:'50.000',       weight:1, color:'#17b34e', textColor:'#fff'},
+  {id:'d7', name:'Grand Prize',  weight:1, color:'#ffe000', textColor:'#000'},
+  {id:'d8', name:'100.000',      weight:1, color:'#17b34e', textColor:'#fff'},
+  {id:'d9', name:'1.000.000',    weight:1, color:'#ffffff', textColor:'#000'},
+  {id:'d10',name:'5.000.000',    weight:1, color:'#17b34e', textColor:'#fff'},
+  {id:'d11',name:'250.000',      weight:1, color:'#ffffff', textColor:'#000'},
+  {id:'d12',name:'20.000',       weight:1, color:'#17b34e', textColor:'#fff'}
+];
+window.addEventListener('DOMContentLoaded', ()=>{ drawWheel(defaultPrizes); });
+
+// ambient falling confetti dots
+(function initRain(){
+  const rain = document.getElementById('rain');
+  const count = 26;
+  for(let i=0;i<count;i++){
+    const s = document.createElement('span');
+    s.style.left = (Math.random()*100)+'%';
+    s.style.animationDuration = (6+Math.random()*8)+'s';
+    s.style.animationDelay = (Math.random()*8)+'s';
+    rain.appendChild(s);
+  }
+})();
 
 let activePrizes = [];
 let pendingCode = null;
 let pendingFixedPrizeId = null;
 let winnerPrize = null;
 
-document.getElementById('btn-check-code').onclick = async ()=>{
+document.getElementById('btn-check-code').onclick = async (e)=>{
+  e.preventDefault();
   const codeVal = document.getElementById('code-input').value.trim().toUpperCase();
   if(!codeVal){ showMsg('Masukkan kode undian terlebih dahulu.', 'error'); return; }
   const btnCheck = document.getElementById('btn-check-code');
@@ -221,7 +316,12 @@ function drawWheel(prizes){
     const label = document.createElement('div');
     label.className='wheel-label';
     label.style.transform = `translateX(-50%) rotate(${mid}deg)`;
-    label.textContent = p.name;
+    const flip = (mid > 90 && mid < 270);
+    const span = document.createElement('span');
+    span.style.color = p.textColor || '#000';
+    span.style.transform = flip ? 'rotate(180deg)' : 'none';
+    span.textContent = p.name;
+    label.appendChild(span);
     wheel.appendChild(label);
   });
   wheel.style.transition='none';
@@ -281,6 +381,7 @@ async function finishSpin(){
 document.getElementById('btn-spin-again').onclick = ()=>{
   document.getElementById('spin-result').classList.add('hidden');
   document.getElementById('spin-entry').classList.remove('hidden');
+  document.getElementById('spin-wheel-area').classList.add('hidden');
   document.getElementById('code-input').value='';
   document.getElementById('name-input').value='';
   pendingCode=null; pendingFixedPrizeId=null; winnerPrize=null;
