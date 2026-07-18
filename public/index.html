@@ -66,28 +66,50 @@
     background:var(--hejo-600);
   }
   .wheel-label{
-    position:absolute; left:50%; top:6%; transform-origin:0% 380%;
-    font-size:11.5px; font-weight:700; text-shadow:0 1px 2px rgba(0,0,0,.4);
-    width:120px; text-align:center; pointer-events:none;
+    position:absolute; left:50%; top:7%; transform-origin:0% 350%;
+    font-weight:700; text-shadow:0 1px 2px rgba(0,0,0,.45);
+    text-align:center; pointer-events:none; line-height:1.08;
   }
   .wheel-label span{ display:inline-block; }
   .hub{
     position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
     width:26%; height:26%; border-radius:50%; z-index:4;
     background:radial-gradient(circle at 35% 30%, #fff, #f1e6fc);
-    box-shadow:0 0 0 5px var(--hejo-950), 0 4px 10px rgba(0,0,0,.5);
+    box-shadow:0 0 0 5px var(--hejo-950), 0 4px 10px rgba(0,0,0,.5), 0 0 0 0 rgba(255,224,0,.6);
     display:flex; align-items:center; justify-content:center; overflow:hidden;
+    animation:hubGlow 1.8s ease-in-out infinite;
   }
-  .hub img{ width:82%; height:82%; object-fit:contain; }
+  @keyframes hubGlow{
+    0%,100%{ box-shadow:0 0 0 5px var(--hejo-950), 0 4px 10px rgba(0,0,0,.5), 0 0 0 0 rgba(255,224,0,.55); }
+    50%{ box-shadow:0 0 0 5px var(--hejo-950), 0 4px 10px rgba(0,0,0,.5), 0 0 14px 8px rgba(255,224,0,.45); }
+  }
+  .hub::after{
+    content:''; position:absolute; inset:0; z-index:5; pointer-events:none;
+    background:linear-gradient(115deg, transparent 40%, rgba(255,255,255,.75) 50%, transparent 60%);
+    background-size:220% 220%;
+    animation:hubShine 2.6s linear infinite;
+  }
+  @keyframes hubShine{
+    0%{ background-position:130% -30%; }
+    100%{ background-position:-30% 130%; }
+  }
+  .hub img{ width:82%; height:82%; object-fit:contain; position:relative; z-index:3; }
 
   /* ---------- Form panel ---------- */
   .panel{width:100%; max-width:340px;}
   .panel h2{
     font-size:clamp(18px,3.2vw,22px); font-weight:700; margin:0 0 18px; color:var(--cream); text-align:center;
   }
+  .rgb-wrap{
+    position:relative; border-radius:999px; padding:3px;
+    background:linear-gradient(90deg,#ff3d5a,#ff9d3d,#f3e93d,#3dff8f,#3dc8ff,#8f3dff,#ff3d5a);
+    background-size:400% 400%; animation:rgbFlow 5s linear infinite;
+    box-shadow:0 8px 22px rgba(0,0,0,.4);
+  }
+  @keyframes rgbFlow{ 0%{background-position:0% 50%;} 100%{background-position:400% 50%;} }
   .pill-group{
     display:flex; align-items:stretch; border-radius:999px; overflow:hidden;
-    background:var(--cream); box-shadow:0 8px 22px rgba(0,0,0,.35);
+    background:var(--cream);
   }
   .pill-group input[type=text]{
     flex:1; min-width:0; border:none; outline:none; background:transparent;
@@ -95,9 +117,16 @@
   }
   .pill-group input::placeholder{color:#8b8b8b;}
   .pill-group .btn-spin-pill{
+    position:relative; overflow:hidden;
     border:none; background:var(--hejo-500); color:#fff; font-weight:700; letter-spacing:.04em;
     padding:0 26px; cursor:pointer; text-transform:uppercase; font-size:13px; transition:.15s;
   }
+  .pill-group .btn-spin-pill::after{
+    content:''; position:absolute; top:0; left:-150%; width:55%; height:100%;
+    background:linear-gradient(115deg, transparent, rgba(255,255,255,.75), transparent);
+    transform:skewX(-20deg); animation:shineMove 2.2s ease-in-out infinite;
+  }
+  @keyframes shineMove{ 0%{left:-150%;} 55%{left:150%;} 100%{left:150%;} }
   .pill-group .btn-spin-pill:hover{background:var(--hejo-600);}
   .pill-group .btn-spin-pill:disabled{opacity:.5; cursor:not-allowed;}
 
@@ -108,11 +137,23 @@
   }
   #name-input::placeholder{color:#8b8b8b;}
 
+  .btn-full-wrap{
+    position:relative; border-radius:999px; padding:3px; margin-top:14px;
+    background:linear-gradient(90deg,#ff3d5a,#ff9d3d,#f3e93d,#3dff8f,#3dc8ff,#8f3dff,#ff3d5a);
+    background-size:400% 400%; animation:rgbFlow 5s linear infinite;
+    box-shadow:0 8px 22px rgba(0,0,0,.4);
+  }
   .btn-full{
+    position:relative; overflow:hidden;
     font-family:var(--font-body); font-weight:700; font-size:14px; letter-spacing:.04em;
     cursor:pointer; border:none; border-radius:999px; padding:15px 18px;
-    width:100%; margin-top:14px; text-transform:uppercase; transition:.15s;
-    background:var(--yellow); color:var(--ink); box-shadow:0 8px 20px rgba(0,0,0,.35);
+    width:100%; text-transform:uppercase; transition:.15s;
+    background:var(--yellow); color:var(--ink);
+  }
+  .btn-full::after{
+    content:''; position:absolute; top:0; left:-150%; width:55%; height:100%;
+    background:linear-gradient(115deg, transparent, rgba(255,255,255,.85), transparent);
+    transform:skewX(-20deg); animation:shineMove 2.2s ease-in-out infinite;
   }
   .btn-full:hover{background:var(--yellow-dark);}
   .btn-full:disabled{opacity:.5; cursor:not-allowed;}
@@ -196,16 +237,20 @@
 
     <div id="spin-entry" class="panel">
       <h2>Masukkan Kode Voucher</h2>
-      <div class="pill-group">
-        <input type="text" id="code-input" placeholder="Kode Voucher" style="text-transform:uppercase;">
-        <button class="btn-spin-pill" id="btn-check-code">Spin</button>
+      <div class="rgb-wrap">
+        <div class="pill-group">
+          <input type="text" id="code-input" placeholder="Kode Voucher" style="text-transform:uppercase;">
+          <button class="btn-spin-pill" id="btn-check-code">Spin</button>
+        </div>
       </div>
       <input type="text" id="name-input" placeholder="Nama kamu (opsional)">
     </div>
 
     <div id="spin-wheel-area" class="panel hidden">
       <h2>Siap Diputar!</h2>
-      <button class="btn-full" id="btn-spin-now">Putar Sekarang!</button>
+      <div class="btn-full-wrap">
+        <button class="btn-full" id="btn-spin-now">Putar Sekarang!</button>
+      </div>
     </div>
 
   </div>
@@ -311,10 +356,20 @@ function drawWheel(prizes){
   wheel.style.background = `conic-gradient(${stops.join(',')})`;
   wheel.querySelectorAll('.wheel-label').forEach(el=>el.remove());
   acc = 0;
+  const segAngleAvg = 360/prizes.length;
+  let fontSize, labelWidth;
+  if(segAngleAvg >= 45){ fontSize=13; labelWidth=130; }
+  else if(segAngleAvg >= 32){ fontSize=11.5; labelWidth=108; }
+  else if(segAngleAvg >= 24){ fontSize=10; labelWidth=90; }
+  else if(segAngleAvg >= 18){ fontSize=9; labelWidth=76; }
+  else { fontSize=8; labelWidth=64; }
+
   prizes.forEach(p=>{
     const mid = (acc + p.weight/2)/total*360; acc += p.weight;
     const label = document.createElement('div');
     label.className='wheel-label';
+    label.style.width = labelWidth+'px';
+    label.style.fontSize = fontSize+'px';
     label.style.transform = `translateX(-50%) rotate(${mid}deg)`;
     const flip = (mid > 90 && mid < 270);
     const span = document.createElement('span');
