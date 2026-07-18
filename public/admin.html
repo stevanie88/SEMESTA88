@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lucky Spin — Panel Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700;9..144,900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<meta name="robots" content="noindex, nofollow">
+<style>
+  :root{
+    --plum-950:#1c0f26; --plum-900:#2a1636; --plum-800:#3a1f47;
+    --gold-500:#e3b23c; --gold-300:#f3d685; --maroon-500:#b23a52;
+    --cream-100:#f8efdd; --teal-500:#3f9483; --ink:#241226;
+    --font-display:'Fraunces', serif; --font-body:'Space Grotesk', sans-serif;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; min-height:100vh;
+    background:
+      radial-gradient(circle at 15% 10%, rgba(227,178,60,0.10), transparent 40%),
+      radial-gradient(circle at 85% 90%, rgba(63,148,131,0.14), transparent 45%),
+      var(--plum-950);
+    color:var(--cream-100); font-family:var(--font-body);
+    display:flex; justify-content:center; padding:28px 14px 60px;
+  }
+  .app{width:100%; max-width:560px;}
+  .eyebrow{font-size:11px; letter-spacing:.18em; text-transform:uppercase; color:var(--gold-300); opacity:.85; margin:0 0 4px; text-align:center;}
+  h1.title{
+    font-family:var(--font-display); font-weight:900; font-size:clamp(24px,6vw,32px);
+    text-align:center; margin:0 0 6px; letter-spacing:-.01em;
+    background:linear-gradient(180deg, var(--gold-300), var(--gold-500));
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+  }
+  .back-link{display:block; text-align:center; font-size:12px; color:var(--gold-300); opacity:.7; margin-bottom:22px; text-decoration:none;}
+  .back-link:hover{opacity:1;}
+  .card{
+    background:var(--plum-900); border:1px solid rgba(227,178,60,.18);
+    border-radius:18px; padding:22px; margin-bottom:16px;
+    box-shadow:0 10px 30px rgba(0,0,0,.25);
+  }
+  .card h2{font-family:var(--font-display); font-weight:700; font-size:19px; margin:0 0 14px; color:var(--gold-300);}
+  label{font-size:12px; text-transform:uppercase; letter-spacing:.08em; color:var(--cream-100); opacity:.7; display:block; margin-bottom:6px;}
+  input[type=text], input[type=number], input[type=password]{
+    width:100%; padding:11px 12px; border-radius:10px; border:1px solid rgba(227,178,60,.25);
+    background:var(--plum-950); color:var(--cream-100); font-family:var(--font-body); font-size:15px; margin-bottom:14px;
+  }
+  input[type=color]{width:44px; height:36px; border:none; border-radius:8px; background:none; margin-bottom:14px; cursor:pointer;}
+  input:focus{outline:2px solid var(--gold-500); outline-offset:1px;}
+  select{background:var(--plum-950); color:var(--cream-100); border:1px solid rgba(227,178,60,.25); border-radius:8px; padding:7px 10px; font-family:var(--font-body); font-size:13px; cursor:pointer;}
+  .btn{
+    font-family:var(--font-body); font-weight:700; font-size:14px; cursor:pointer; border:none;
+    border-radius:12px; padding:12px 18px; transition:.15s; width:100%;
+  }
+  .btn-primary{background:var(--gold-500); color:var(--ink);}
+  .btn-primary:hover{background:var(--gold-300);}
+  .btn-secondary{background:transparent; color:var(--gold-300); border:1px solid rgba(227,178,60,.35);}
+  .btn-secondary:hover{border-color:var(--gold-500);}
+  .btn-danger{background:transparent; color:var(--maroon-500); border:1px solid var(--maroon-500);}
+  .btn-row{display:flex; gap:8px;}
+  .btn-row .btn{width:auto; flex:1;}
+  .icon-btn{background:none; border:none; color:var(--cream-100); opacity:.6; cursor:pointer; font-size:16px; padding:4px 6px;}
+  .icon-btn:hover{opacity:1; color:var(--maroon-500);}
+  .empty{text-align:center; padding:22px 10px; opacity:.55; font-size:13px;}
+  table{width:100%; border-collapse:collapse; font-size:13px;}
+  th, td{text-align:left; padding:8px 6px; border-bottom:1px solid rgba(227,178,60,.12);}
+  th{opacity:.6; font-weight:600; text-transform:uppercase; font-size:10px; letter-spacing:.06em;}
+  .msg{font-size:13px; padding:10px 12px; border-radius:10px; margin-bottom:14px;}
+  .msg.error{background:rgba(178,58,82,.2); color:#f0a3b4; border:1px solid rgba(178,58,82,.4);}
+  .msg.ok{background:rgba(63,148,131,.2); color:#8fd4c3; border:1px solid rgba(63,148,131,.4);}
+  .small-note{font-size:11px; opacity:.55; margin-top:-6px; margin-bottom:14px; line-height:1.5;}
+  .hidden{display:none !important;}
+
+  .prize-columns-row{display:flex; align-items:center; gap:10px; margin-bottom:14px;}
+  .prize-columns-row label{margin-bottom:0; white-space:nowrap;}
+  .prize-grid{display:grid; grid-template-columns:repeat(var(--prize-cols, 2), 1fr); gap:10px;}
+  .prize-tile{
+    background:var(--plum-950); border:1px solid rgba(227,178,60,.18); border-radius:12px;
+    padding:12px 10px; display:flex; flex-direction:column; align-items:center; text-align:center;
+    gap:5px; position:relative; min-width:0;
+  }
+  .prize-tile .swatch{width:20px; height:20px; margin-bottom:2px; border-radius:50%; box-shadow:0 0 0 2px rgba(255,255,255,.15);}
+  .prize-tile .prize-name{flex:none; font-weight:600; font-size:13px; width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+  .prize-tile .prize-meta{font-size:11px; opacity:.65;}
+  .prize-tile .icon-btn{position:absolute; top:4px; right:4px; padding:2px 5px; font-size:13px;}
+</style>
+</head>
+<body>
+<div class="app">
+  <p class="eyebrow">Undian Kupon Emas</p>
+  <h1 class="title">Panel Admin</h1>
+  <a href="/" class="back-link">← Ke halaman Lucky Spin (player)</a>
+
+  <div id="msgbox"></div>
+
+  <!-- ADMIN LOGIN -->
+  <div id="view-admin-login">
+    <div class="card">
+      <h2>Masuk sebagai Admin</h2>
+      <label>PIN Admin</label>
+      <input type="password" id="admin-pin-input" placeholder="Masukkan PIN">
+      <button class="btn btn-primary" id="btn-admin-login">Masuk</button>
+    </div>
+  </div>
+
+  <!-- ADMIN PANEL -->
+  <div id="view-admin" class="hidden">
+
+    <div class="card">
+      <h2>🎁 Kelola Hadiah</h2>
+      <div class="prize-columns-row">
+        <label>Jumlah Kolom</label>
+        <select id="prize-columns-select">
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+        </select>
+      </div>
+      <div id="prize-list" class="prize-grid"></div>
+      <div style="margin-top:14px;">
+        <label>Nama Hadiah</label>
+        <input type="text" id="prize-name-input" placeholder="Misal: Voucher 50rb">
+        <div style="display:flex; gap:10px; align-items:flex-end;">
+          <div style="flex:1;">
+            <label>Peluang (bobot)</label>
+            <input type="number" id="prize-weight-input" value="10" min="0" style="margin-bottom:14px;">
+          </div>
+          <div style="flex:1;">
+            <label>Stok (kosongkan = ∞)</label>
+            <input type="number" id="prize-stock-input" placeholder="∞" min="0" style="margin-bottom:14px;">
+          </div>
+          <input type="color" id="prize-color-input" value="#e3b23c">
+        </div>
+        <button class="btn btn-secondary" id="btn-add-prize">+ Tambah Hadiah</button>
+      </div>
+      <p class="small-note">Bobot menentukan peluang menang. Ubah kapan saja — perubahan langsung berlaku untuk putaran berikutnya.</p>
+    </div>
+
+    <div class="card">
+      <h2>🎟️ Buat Kode Undian</h2>
+      <label>Jumlah kode yang dibuat</label>
+      <input type="number" id="code-count-input" value="10" min="1" max="200">
+      <label>Hadiah untuk kode ini</label>
+      <select id="code-fixed-prize-select" style="width:100%; margin-bottom:14px;">
+        <option value="">🎲 Acak (sesuai peluang)</option>
+      </select>
+      <button class="btn btn-secondary" id="btn-generate-codes">Buat Kode Baru</button>
+      <p class="small-note">Pilih "Acak" supaya hasil undian mengikuti peluang di atas, atau pilih nama hadiah tertentu supaya semua kode yang dibuat kali ini <strong>dijamin</strong> dapat hadiah itu.</p>
+      <div id="code-list" style="margin-top:14px;"></div>
+    </div>
+
+    <div class="card">
+      <h2>📊 Riwayat Pemenang</h2>
+      <div id="history-list"></div>
+      <div class="btn-row" style="margin-top:12px;">
+        <button class="btn btn-secondary" id="btn-export-csv">Unduh CSV</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>🔗 Sambungkan ke Google Sheets</h2>
+      <label>URL Web App (Google Apps Script)</label>
+      <input type="text" id="webhook-input" placeholder="https://script.google.com/macros/s/.../exec">
+      <button class="btn btn-secondary" id="btn-save-webhook">Simpan Sambungan</button>
+      <p class="small-note">Setiap kali ada pemenang baru, datanya otomatis dikirim ke Google Sheets kamu.</p>
+    </div>
+
+    <div class="card">
+      <h2>⚙️ Pengaturan</h2>
+      <label>Ganti PIN Admin</label>
+      <input type="password" id="new-pin-input" placeholder="PIN baru">
+      <button class="btn btn-secondary" id="btn-change-pin">Simpan PIN Baru</button>
+      <div style="height:6px;"></div>
+      <button class="btn btn-danger" id="btn-logout">Keluar dari Panel Admin</button>
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+let state = null;
+let isAdmin = false;
+
+function uid(){ return Math.random().toString(36).slice(2,9); }
+
+async function loadState(){
+  const res = await fetch('/api/state');
+  state = await res.json();
+}
+async function saveState(){
+  try{
+    const res = await fetch('/api/state', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify(state)
+    });
+    if(!res.ok) throw new Error('save failed');
+  }catch(e){ showMsg('Gagal menyimpan data ke server. Cek koneksi internet.', 'error'); }
+}
+
+function showMsg(text, type){
+  const box = document.getElementById('msgbox');
+  box.innerHTML = `<div class="msg ${type}">${text}</div>`;
+  setTimeout(()=>{ box.innerHTML=''; }, 4000);
+}
+
+function escapeHtml(str){
+  const d = document.createElement('div');
+  d.textContent = str;
+  return d.innerHTML;
+}
+
+// ---------- LOGIN ----------
+document.getElementById('btn-admin-login').onclick = async ()=>{
+  const pin = document.getElementById('admin-pin-input').value;
+  const btn = document.getElementById('btn-admin-login');
+  btn.disabled = true;
+  await loadState();
+  btn.disabled = false;
+  if(pin === state.settings.pin){
+    isAdmin = true;
+    document.getElementById('admin-pin-input').value='';
+    document.getElementById('view-admin-login').classList.add('hidden');
+    document.getElementById('view-admin').classList.remove('hidden');
+    renderAdmin();
+  } else {
+    showMsg('PIN salah. Coba lagi.', 'error');
+  }
+};
+document.getElementById('btn-logout').onclick = ()=>{
+  isAdmin = false;
+  document.getElementById('view-admin').classList.add('hidden');
+  document.getElementById('view-admin-login').classList.remove('hidden');
+};
+
+function renderAdmin(){
+  renderPrizes();
+  renderCodes();
+  renderHistory();
+  document.getElementById('webhook-input').value = state.settings.webhookUrl || '';
+}
+
+// ---------- PRIZES ----------
+function renderPrizes(){
+  const list = document.getElementById('prize-list');
+  const cols = state.settings.prizeColumns || 2;
+  list.style.setProperty('--prize-cols', cols);
+  document.getElementById('prize-columns-select').value = String(cols);
+
+  if(state.prizes.length===0){ list.innerHTML = '<div class="empty">Belum ada hadiah. Tambahkan di bawah.</div>'; return; }
+  list.innerHTML = state.prizes.map(p=>`
+    <div class="prize-tile">
+      <button class="icon-btn" data-id="${p.id}" data-action="del">✕</button>
+      <div class="swatch" style="background:${p.color}"></div>
+      <div class="prize-name" title="${escapeHtml(p.name)}">${escapeHtml(p.name)}</div>
+      <div class="prize-meta">bobot ${p.weight} · stok ${p.stock===null?'∞':p.stock}</div>
+    </div>
+  `).join('');
+  list.querySelectorAll('[data-action=del]').forEach(btn=>{
+    btn.onclick = ()=>{
+      state.prizes = state.prizes.filter(p=>p.id!==btn.dataset.id);
+      saveState(); renderPrizes(); populatePrizeSelect();
+    };
+  });
+  populatePrizeSelect();
+}
+
+document.getElementById('prize-columns-select').onchange = (e)=>{
+  state.settings.prizeColumns = parseInt(e.target.value) || 2;
+  document.getElementById('prize-list').style.setProperty('--prize-cols', state.settings.prizeColumns);
+  saveState();
+};
+
+function populatePrizeSelect(){
+  const sel = document.getElementById('code-fixed-prize-select');
+  const current = sel.value;
+  sel.innerHTML = '<option value="">🎲 Acak (sesuai peluang)</option>' +
+    state.prizes.map(p=>`<option value="${p.id}">${escapeHtml(p.name)}</option>`).join('');
+  if([...sel.options].some(o=>o.value===current)) sel.value = current;
+}
+document.getElementById('btn-add-prize').onclick = ()=>{
+  const name = document.getElementById('prize-name-input').value.trim();
+  const weight = parseFloat(document.getElementById('prize-weight-input').value) || 0;
+  const stockRaw = document.getElementById('prize-stock-input').value;
+  const stock = stockRaw === '' ? null : parseInt(stockRaw);
+  const color = document.getElementById('prize-color-input').value;
+  if(!name){ showMsg('Nama hadiah wajib diisi.', 'error'); return; }
+  if(weight<=0){ showMsg('Bobot peluang harus lebih dari 0.', 'error'); return; }
+  state.prizes.push({id:uid(), name, weight, stock, color});
+  document.getElementById('prize-name-input').value='';
+  document.getElementById('prize-weight-input').value='10';
+  document.getElementById('prize-stock-input').value='';
+  saveState(); renderPrizes();
+  showMsg('Hadiah ditambahkan.', 'ok');
+};
+
+// ---------- CODES ----------
+function genCode(){
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let s='';
+  for(let i=0;i<4;i++) s += chars[Math.floor(Math.random()*chars.length)];
+  return 'LUCK-'+s;
+}
+document.getElementById('btn-generate-codes').onclick = ()=>{
+  const count = Math.min(200, Math.max(1, parseInt(document.getElementById('code-count-input').value)||1));
+  const fixedPrizeId = document.getElementById('code-fixed-prize-select').value || null;
+  const existing = new Set(state.codes.map(c=>c.code));
+  let made=0, attempts=0;
+  while(made<count && attempts<count*20){
+    attempts++;
+    const code = genCode();
+    if(existing.has(code)) continue;
+    existing.add(code);
+    state.codes.push({code, used:false, createdAt:Date.now(), fixedPrizeId});
+    made++;
+  }
+  saveState(); renderCodes();
+  const prizeLabel = fixedPrizeId ? (state.prizes.find(p=>p.id===fixedPrizeId)||{}).name : 'acak';
+  showMsg(`${made} kode baru dibuat (hadiah: ${prizeLabel}).`, 'ok');
+};
+function renderCodes(){
+  const list = document.getElementById('code-list');
+  if(state.codes.length===0){ list.innerHTML = '<div class="empty">Belum ada kode. Buat di atas.</div>'; return; }
+  const recent = [...state.codes].sort((a,b)=>b.createdAt-a.createdAt).slice(0,40);
+  const prizeOptions = (selectedId)=>{
+    return '<option value="">🎲 Acak</option>' + state.prizes.map(p=>
+      `<option value="${p.id}" ${p.id===selectedId?'selected':''}>${escapeHtml(p.name)}</option>`
+    ).join('');
+  };
+  list.innerHTML = `<table><thead><tr><th>Kode</th><th>Status</th><th>Hadiah</th><th></th></tr></thead><tbody>
+    ${recent.map(c=>`
+      <tr>
+        <td style="font-family:monospace;">${c.code}</td>
+        <td>${c.used ? '✅ Terpakai' : '⏳ Belum'}</td>
+        <td>
+          ${c.used
+            ? escapeHtml(c.prize||'-')
+            : `<select data-code="${c.code}" class="code-prize-select" style="background:var(--plum-950); color:var(--cream-100); border:1px solid rgba(227,178,60,.25); border-radius:6px; padding:4px 6px; font-size:12px;">${prizeOptions(c.fixedPrizeId)}</select>`
+          }
+        </td>
+        <td>${c.used ? '' : `<button class="icon-btn" data-del="${c.code}">✕</button>`}</td>
+      </tr>
+    `).join('')}
+  </tbody></table>`;
+  if(state.codes.length>40){
+    list.innerHTML += `<div class="small-note" style="margin-top:8px;">Menampilkan 40 kode terbaru dari ${state.codes.length} total.</div>`;
+  }
+  list.querySelectorAll('.code-prize-select').forEach(sel=>{
+    sel.onchange = ()=>{
+      const c = state.codes.find(c=>c.code===sel.dataset.code);
+      if(c){ c.fixedPrizeId = sel.value || null; saveState(); }
+    };
+  });
+  list.querySelectorAll('[data-del]').forEach(btn=>{
+    btn.onclick = ()=>{
+      state.codes = state.codes.filter(c=>c.code!==btn.dataset.del);
+      saveState(); renderCodes();
+    };
+  });
+}
+
+// ---------- HISTORY ----------
+function renderHistory(){
+  const list = document.getElementById('history-list');
+  if(state.history.length===0){ list.innerHTML = '<div class="empty">Belum ada pemenang.</div>'; return; }
+  const rows = state.history.slice(0,50).map(h=>`
+    <tr>
+      <td>${escapeHtml(h.code)}</td>
+      <td>${escapeHtml(h.prize)}</td>
+      <td>${escapeHtml(h.name||'-')}</td>
+      <td>${new Date(h.timestamp).toLocaleString('id-ID')}</td>
+    </tr>
+  `).join('');
+  list.innerHTML = `<table><thead><tr><th>Kode</th><th>Hadiah</th><th>Nama</th><th>Waktu</th></tr></thead><tbody>${rows}</tbody></table>`;
+}
+document.getElementById('btn-export-csv').onclick = ()=>{
+  if(state.history.length===0){ showMsg('Belum ada data untuk diunduh.', 'error'); return; }
+  const header = 'Kode,Hadiah,Nama,Waktu\n';
+  const rows = state.history.map(h=> [h.code, h.prize, h.name||'', h.timestamp].map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const blob = new Blob([header+rows], {type:'text/csv;charset=utf-8;'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'lucky-spin-riwayat.csv';
+  a.click();
+  URL.revokeObjectURL(url);
+};
+
+// ---------- GOOGLE SHEETS WEBHOOK ----------
+document.getElementById('btn-save-webhook').onclick = async ()=>{
+  state.settings.webhookUrl = document.getElementById('webhook-input').value.trim();
+  await saveState();
+  showMsg('Sambungan Google Sheets disimpan.', 'ok');
+};
+
+// ---------- PIN CHANGE ----------
+document.getElementById('btn-change-pin').onclick = async ()=>{
+  const newPin = document.getElementById('new-pin-input').value.trim();
+  if(!newPin || newPin.length<4){ showMsg('PIN minimal 4 karakter.', 'error'); return; }
+  state.settings.pin = newPin;
+  document.getElementById('new-pin-input').value='';
+  await saveState();
+  showMsg('PIN berhasil diganti.', 'ok');
+};
+</script>
+</body>
+</html>
