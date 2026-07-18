@@ -1,0 +1,10 @@
+name = "lucky-spin"
+main = "src/index.js"
+compatibility_date = "2024-09-23"
+
+[assets]
+directory = "./public"
+binding = "ASSETS"
+
+# Binding KV (LUCKY_KV) ditambahkan lewat dashboard Cloudflare di tab "Bindings",
+# bukan di file ini — lebih gampang, tidak perlu edit file ini lagi setelah deploy pertama.
