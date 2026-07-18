@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lucky Spin — Undian Berhadiah</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700;9..144,900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --plum-950:#1c0f26; --plum-900:#2a1636; --plum-800:#3a1f47;
+    --gold-500:#e3b23c; --gold-300:#f3d685; --maroon-500:#b23a52;
+    --cream-100:#f8efdd; --teal-500:#3f9483; --ink:#241226;
+    --font-display:'Fraunces', serif; --font-body:'Space Grotesk', sans-serif;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; min-height:100vh;
+    background:
+      radial-gradient(circle at 15% 10%, rgba(227,178,60,0.10), transparent 40%),
+      radial-gradient(circle at 85% 90%, rgba(63,148,131,0.14), transparent 45%),
+      var(--plum-950);
+    color:var(--cream-100); font-family:var(--font-body);
+    display:flex; justify-content:center; padding:28px 14px 60px;
+  }
+  .app{width:100%; max-width:520px;}
+  .eyebrow{font-size:11px; letter-spacing:.18em; text-transform:uppercase; color:var(--gold-300); opacity:.85; margin:0 0 4px; text-align:center;}
+  h1.title{
+    font-family:var(--font-display); font-weight:900; font-size:clamp(28px,7vw,38px);
+    text-align:center; margin:0 0 26px; letter-spacing:-.01em;
+    background:linear-gradient(180deg, var(--gold-300), var(--gold-500));
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+  }
+  input[type=text]{
+    width:100%; padding:11px 12px; border-radius:10px; border:1px solid rgba(227,178,60,.25);
+    background:var(--plum-950); color:var(--cream-100); font-family:var(--font-body); font-size:15px; margin-bottom:0;
+  }
+  input:focus{outline:2px solid var(--gold-500); outline-offset:1px;}
+  .btn{
+    font-family:var(--font-body); font-weight:700; font-size:14px; cursor:pointer; border:none;
+    border-radius:12px; padding:13px 18px; transition:.15s; width:100%; margin-top:14px;
+  }
+  .btn-primary{background:var(--gold-500); color:var(--ink); position:relative; overflow:hidden;}
+  .btn-primary:hover{background:var(--gold-300);}
+  .btn-primary::after{
+    content:''; position:absolute; top:0; left:-150%; width:55%; height:100%;
+    background:linear-gradient(115deg, transparent, rgba(255,255,255,.65), transparent);
+    transform:skewX(-20deg); animation:shineMove 2.4s ease-in-out infinite;
+  }
+  @keyframes shineMove{ 0%{left:-150%;} 55%{left:150%;} 100%{left:150%;} }
+  .btn-secondary{background:transparent; color:var(--gold-300); border:1px solid rgba(227,178,60,.35);}
+  .btn-secondary:hover{border-color:var(--gold-500);}
+  .btn:disabled{opacity:.55; cursor:not-allowed;}
+
+  .ticket{background:var(--cream-100); color:var(--ink); border-radius:14px; padding:20px; position:relative;}
+  .ticket:before, .ticket:after{content:''; position:absolute; top:50%; transform:translateY(-50%); width:20px; height:20px; background:var(--plum-950); border-radius:50%;}
+  .ticket:before{left:-10px;} .ticket:after{right:-10px;}
+  .ticket-dash{border-top:2px dashed rgba(36,18,38,.25); margin:14px -20px;}
+
+  .rgb-glow-wrap{
+    position:relative; border-radius:16px; padding:2.5px; margin-bottom:0;
+    background:linear-gradient(90deg,#ff3d5a,#ff9d3d,#f3e93d,#3dff8f,#3dc8ff,#8f3dff,#ff3d5a);
+    background-size:400% 400%; animation:rgbFlow 6s linear infinite;
+    box-shadow:0 0 18px rgba(227,178,60,.25);
+  }
+  @keyframes rgbFlow{ 0%{background-position:0% 50%;} 100%{background-position:400% 50%;} }
+
+  .wheel-wrap{position:relative; width:min(320px,80vw); height:min(320px,80vw); margin:6px auto 22px;}
+  .wheel{
+    width:100%; height:100%; border-radius:50%; position:relative; overflow:hidden;
+    box-shadow:0 0 0 8px var(--plum-950), 0 0 0 11px var(--gold-500), 0 20px 40px rgba(0,0,0,.4);
+    transition:transform 4.5s cubic-bezier(.17,.85,.15,1);
+  }
+  .wheel-label{
+    position:absolute; left:50%; top:8%; transform-origin:0% 320%;
+    font-size:12px; font-weight:700; color:#fff; text-shadow:0 1px 3px rgba(0,0,0,.5);
+    width:110px; text-align:center; pointer-events:none;
+  }
+  .pointer{
+    position:absolute; top:-6px; left:50%; transform:translateX(-50%);
+    width:0; height:0; border-left:12px solid transparent; border-right:12px solid transparent;
+    border-top:22px solid var(--gold-500); z-index:5; filter:drop-shadow(0 2px 3px rgba(0,0,0,.4));
+  }
+  .hub{
+    position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+    width:16%; height:16%; border-radius:50%; background:radial-gradient(circle at 35% 30%, var(--gold-300), var(--gold-500));
+    box-shadow:0 3px 8px rgba(0,0,0,.4); z-index:4;
+  }
+
+  .modal-overlay{
+    position:fixed; inset:0; background:rgba(20,10,28,.78);
+    display:flex; align-items:center; justify-content:center;
+    z-index:60; padding:20px; animation:fadeIn .25s ease;
+  }
+  @keyframes fadeIn{from{opacity:0} to{opacity:1}}
+  .modal-card{width:100%; max-width:360px; animation:popIn .5s cubic-bezier(.17,.85,.15,1);}
+  @keyframes popIn{
+    0%{transform:scale(.55) translateY(10px); opacity:0;}
+    65%{transform:scale(1.06); opacity:1;}
+    100%{transform:scale(1) translateY(0);}
+  }
+  .confetti-row{font-size:26px; letter-spacing:6px; text-align:center; margin-bottom:2px; animation:confettiBounce 1s ease-in-out infinite alternate;}
+  @keyframes confettiBounce{ from{transform:translateY(0) rotate(-4deg);} to{transform:translateY(-6px) rotate(4deg);} }
+  .result-banner{
+    text-align:center; padding:20px; border-radius:14px; margin-bottom:16px;
+    background:linear-gradient(135deg, var(--teal-500), #2b6e60); position:relative; overflow:hidden;
+  }
+  .result-banner::before{
+    content:''; position:absolute; inset:0;
+    background:radial-gradient(circle at 30% 20%, rgba(255,255,255,.25), transparent 45%);
+    animation:glowPulse 2.2s ease-in-out infinite;
+  }
+  @keyframes glowPulse{ 0%,100%{opacity:.5;} 50%{opacity:1;} }
+  .result-banner .prize-won{font-family:var(--font-display); font-weight:900; font-size:26px; margin:4px 0; position:relative;}
+
+  .msg{font-size:13px; padding:10px 12px; border-radius:10px; margin-bottom:14px;}
+  .msg.error{background:rgba(178,58,82,.2); color:#f0a3b4; border:1px solid rgba(178,58,82,.4);}
+  .msg.ok{background:rgba(63,148,131,.2); color:#8fd4c3; border:1px solid rgba(63,148,131,.4);}
+  .hidden{display:none !important;}
+</style>
+</head>
+<body>
+<div class="app">
+  <p class="eyebrow">Undian Kupon Emas</p>
+  <h1 class="title">Lucky Spin</h1>
+
+  <div id="msgbox"></div>
+
+  <div id="spin-entry">
+    <div class="rgb-glow-wrap">
+      <div class="ticket">
+        <p class="eyebrow" style="text-align:left; margin-bottom:8px;">Masukkan Kode Undian</p>
+        <input type="text" id="code-input" placeholder="Contoh: LUCK-4821" style="text-transform:uppercase; margin-bottom:0;">
+        <div class="ticket-dash"></div>
+        <input type="text" id="name-input" placeholder="Nama kamu (opsional)" style="margin-bottom:0;">
+      </div>
+    </div>
+    <button class="btn btn-primary" id="btn-check-code">Cek &amp; Putar Roda</button>
+  </div>
+
+  <div id="spin-wheel-area" class="hidden">
+    <div class="wheel-wrap">
+      <div class="pointer"></div>
+      <div class="wheel" id="wheel"></div>
+      <div class="hub"></div>
+    </div>
+    <button class="btn btn-primary" id="btn-spin-now">Putar Sekarang!</button>
+  </div>
+
+  <div id="spin-result" class="hidden modal-overlay">
+    <div class="modal-card">
+      <div class="confetti-row">🎉 🎊 ✨ 🎊 🎉</div>
+      <div class="result-banner">
+        <div style="font-size:13px; opacity:.85; position:relative;">Selamat!</div>
+        <div class="prize-won" id="result-prize-name">-</div>
+      </div>
+      <button class="btn btn-secondary" id="btn-spin-again">Kembali</button>
+    </div>
+  </div>
+</div>
+
+<script>
+function showMsg(text, type){
+  const box = document.getElementById('msgbox');
+  box.innerHTML = `<div class="msg ${type}">${text}</div>`;
+  setTimeout(()=>{ box.innerHTML=''; }, 4000);
+}
+
+let activePrizes = [];
+let pendingCode = null;
+let pendingFixedPrizeId = null;
+let winnerPrize = null;
+
+document.getElementById('btn-check-code').onclick = async ()=>{
+  const codeVal = document.getElementById('code-input').value.trim().toUpperCase();
+  if(!codeVal){ showMsg('Masukkan kode undian terlebih dahulu.', 'error'); return; }
+  const btnCheck = document.getElementById('btn-check-code');
+  btnCheck.disabled = true;
+  try{
+    const res = await fetch('/api/check-code', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ code: codeVal })
+    });
+    const data = await res.json();
+    btnCheck.disabled = false;
+    if(!data.valid){ showMsg(data.message || 'Kode tidak valid.', 'error'); return; }
+    pendingCode = codeVal;
+    pendingFixedPrizeId = data.fixedPrizeId || null;
+    activePrizes = data.prizes;
+    drawWheel(activePrizes);
+    document.getElementById('spin-entry').classList.add('hidden');
+    document.getElementById('spin-wheel-area').classList.remove('hidden');
+  }catch(e){
+    btnCheck.disabled = false;
+    showMsg('Gagal menghubungi server. Cek koneksi internet.', 'error');
+  }
+};
+
+function pickWeighted(prizes){
+  const total = prizes.reduce((s,p)=>s+p.weight,0);
+  let r = Math.random()*total;
+  for(const p of prizes){ if(r < p.weight) return p; r -= p.weight; }
+  return prizes[prizes.length-1];
+}
+
+function drawWheel(prizes){
+  const total = prizes.reduce((s,p)=>s+p.weight,0);
+  let acc = 0;
+  const stops = [];
+  prizes.forEach(p=>{
+    const start = acc/total*360; acc += p.weight; const end = acc/total*360;
+    stops.push(`${p.color} ${start}deg ${end}deg`);
+  });
+  const wheel = document.getElementById('wheel');
+  wheel.style.background = `conic-gradient(${stops.join(',')})`;
+  wheel.querySelectorAll('.wheel-label').forEach(el=>el.remove());
+  acc = 0;
+  prizes.forEach(p=>{
+    const mid = (acc + p.weight/2)/total*360; acc += p.weight;
+    const label = document.createElement('div');
+    label.className='wheel-label';
+    label.style.transform = `translateX(-50%) rotate(${mid}deg)`;
+    label.textContent = p.name;
+    wheel.appendChild(label);
+  });
+  wheel.style.transition='none';
+  wheel.style.transform='rotate(0deg)';
+}
+
+document.getElementById('btn-spin-now').onclick = ()=>{
+  const btn = document.getElementById('btn-spin-now');
+  btn.disabled = true;
+  let winner = null;
+  if(pendingFixedPrizeId){
+    winner = activePrizes.find(p=>p.id===pendingFixedPrizeId) || null;
+  }
+  if(!winner) winner = pickWeighted(activePrizes);
+  winnerPrize = winner;
+  const total = activePrizes.reduce((s,p)=>s+p.weight,0);
+  let acc = 0;
+  for(const p of activePrizes){
+    if(p.id===winner.id){ acc += p.weight/2; break; }
+    acc += p.weight;
+  }
+  const targetAngleInSegment = acc/total*360;
+  const spins = 5*360;
+  const finalRotation = spins + (360 - targetAngleInSegment);
+  const wheel = document.getElementById('wheel');
+  wheel.style.transition='transform 4.5s cubic-bezier(.17,.85,.15,1)';
+  requestAnimationFrame(()=>{ wheel.style.transform = `rotate(${finalRotation}deg)`; });
+  setTimeout(()=> finishSpin(), 4700);
+};
+
+async function finishSpin(){
+  const name = document.getElementById('name-input').value.trim();
+  try{
+    const res = await fetch('/api/finish-spin', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ code: pendingCode, prizeId: winnerPrize.id, name })
+    });
+    const data = await res.json();
+    if(data.status !== 'ok'){
+      showMsg(data.message || 'Terjadi kesalahan saat menyimpan hasil.', 'error');
+      document.getElementById('spin-wheel-area').classList.add('hidden');
+      document.getElementById('spin-entry').classList.remove('hidden');
+      document.getElementById('btn-spin-now').disabled = false;
+      return;
+    }
+    document.getElementById('result-prize-name').textContent = data.prizeName;
+    document.getElementById('spin-wheel-area').classList.add('hidden');
+    document.getElementById('spin-result').classList.remove('hidden');
+    document.getElementById('btn-spin-now').disabled = false;
+  }catch(e){
+    showMsg('Gagal menghubungi server. Coba lagi.', 'error');
+    document.getElementById('btn-spin-now').disabled = false;
+  }
+}
+
+document.getElementById('btn-spin-again').onclick = ()=>{
+  document.getElementById('spin-result').classList.add('hidden');
+  document.getElementById('spin-entry').classList.remove('hidden');
+  document.getElementById('code-input').value='';
+  document.getElementById('name-input').value='';
+  pendingCode=null; pendingFixedPrizeId=null; winnerPrize=null;
+};
+</script>
+</body>
+</html>
