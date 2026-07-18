@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lucky Spin — Undian Berhadiah</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700;9..144,900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --plum-950:#1c0f26;
+    --plum-900:#2a1636;
+    --plum-800:#3a1f47;
+    --gold-500:#e3b23c;
+    --gold-300:#f3d685;
+    --maroon-500:#b23a52;
+    --cream-100:#f8efdd;
+    --teal-500:#3f9483;
+    --ink:#241226;
+    --font-display:'Fraunces', serif;
+    --font-body:'Space Grotesk', sans-serif;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    min-height:100vh;
+    background:
+      radial-gradient(circle at 15% 10%, rgba(227,178,60,0.10), transparent 40%),
+      radial-gradient(circle at 85% 90%, rgba(63,148,131,0.14), transparent 45%),
+      var(--plum-950);
+    color:var(--cream-100);
+    font-family:var(--font-body);
+    display:flex;
+    justify-content:center;
+    padding:28px 14px 60px;
+  }
+  .app{width:100%; max-width:520px;}
+  .eyebrow{
+    font-size:11px; letter-spacing:.18em; text-transform:uppercase;
+    color:var(--gold-300); opacity:.85; margin:0 0 4px; text-align:center;
+  }
+  h1.title{
+    font-family:var(--font-display); font-weight:900; font-size:clamp(28px,7vw,38px);
+    text-align:center; margin:0 0 22px; letter-spacing:-.01em;
+    background:linear-gradient(180deg, var(--gold-300), var(--gold-500));
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+  }
+  .nav{display:flex; gap:8px; justify-content:center; margin-bottom:22px;}
+  .nav button{
+    font-family:var(--font-body); font-weight:600; font-size:13px;
+    background:var(--plum-800); color:var(--cream-100); border:1px solid rgba(227,178,60,.25);
+    padding:9px 16px; border-radius:999px; cursor:pointer; transition:.15s;
+  }
+  .nav button.active{background:var(--gold-500); color:var(--ink); border-color:var(--gold-500);}
+  .nav button:hover{border-color:var(--gold-500);}
+  .card{
+    background:var(--plum-900); border:1px solid rgba(227,178,60,.18);
+    border-radius:18px; padding:22px; margin-bottom:16px;
+    box-shadow:0 10px 30px rgba(0,0,0,.25);
+  }
+  .card h2{font-family:var(--font-display); font-weight:700; font-size:19px; margin:0 0 14px; color:var(--gold-300);}
+  label{font-size:12px; text-transform:uppercase; letter-spacing:.08em; color:var(--cream-100); opacity:.7; display:block; margin-bottom:6px;}
+  input[type=text], input[type=number], input[type=password]{
+    width:100%; padding:11px 12px; border-radius:10px; border:1px solid rgba(227,178,60,.25);
+    background:var(--plum-950); color:var(--cream-100); font-family:var(--font-body); font-size:15px; margin-bottom:14px;
+  }
+  input[type=color]{width:44px; height:36px; border:none; border-radius:8px; background:none; margin-bottom:14px; cursor:pointer;}
+  input:focus{outline:2px solid var(--gold-500); outline-offset:1px;}
+  .btn{
+    font-family:var(--font-body); font-weight:700; font-size:14px; cursor:pointer; border:none;
+    border-radius:12px; padding:12px 18px; transition:.15s; width:100%;
+  }
+  .btn-primary{background:var(--gold-500); color:var(--ink);}
+  .btn-primary:hover{background:var(--gold-300);}
+  .btn-secondary{background:transparent; color:var(--gold-300); border:1px solid rgba(227,178,60,.35);}
+  .btn-secondary:hover{border-color:var(--gold-500);}
+  .btn-danger{background:transparent; color:var(--maroon-500); border:1px solid var(--maroon-500);}
+  .btn-row{display:flex; gap:8px;}
+  .btn-row .btn{width:auto; flex:1;}
+  .prize-row{
+    display:flex; align-items:center; gap:10px; padding:10px 0;
+    border-bottom:1px solid rgba(227,178,60,.12);
+  }
+  .prize-row:last-child{border-bottom:none;}
+  .swatch{width:16px; height:16px; border-radius:50%; flex-shrink:0; box-shadow:0 0 0 2px rgba(255,255,255,.15);}
+  .prize-name{flex:1; font-weight:600; font-size:14px;}
+  .prize-meta{font-size:12px; opacity:.65;}
+  .icon-btn{background:none; border:none; color:var(--cream-100); opacity:.6; cursor:pointer; font-size:16px; padding:4px 6px;}
+  .icon-btn:hover{opacity:1; color:var(--maroon-500);}
+  .empty{text-align:center; padding:22px 10px; opacity:.55; font-size:13px;}
+  .wheel-wrap{position:relative; width:min(320px,80vw); height:min(320px,80vw); margin:6px auto 22px;}
+  .wheel{
+    width:100%; height:100%; border-radius:50%; position:relative; overflow:hidden;
+    box-shadow:0 0 0 8px var(--plum-950), 0 0 0 11px var(--gold-500), 0 20px 40px rgba(0,0,0,.4);
+    transition:transform 4.5s cubic-bezier(.17,.85,.15,1);
+  }
+  .wheel-label{
+    position:absolute; left:50%; top:8%; transform-origin:0% 320%;
+    font-size:12px; font-weight:700; color:#fff; text-shadow:0 1px 3px rgba(0,0,0,.5);
+    width:110px; text-align:center; pointer-events:none;
+  }
+  .pointer{
+    position:absolute; top:-6px; left:50%; transform:translateX(-50%);
+    width:0; height:0; border-left:12px solid transparent; border-right:12px solid transparent;
+    border-top:22px solid var(--gold-500); z-index:5; filter:drop-shadow(0 2px 3px rgba(0,0,0,.4));
+  }
+  .hub{
+    position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+    width:16%; height:16%; border-radius:50%; background:radial-gradient(circle at 35% 30%, var(--gold-300), var(--gold-500));
+    box-shadow:0 3px 8px rgba(0,0,0,.4); z-index:4;
+  }
+  .ticket{
+    background:var(--cream-100); color:var(--ink); border-radius:14px; padding:20px;
+    position:relative; margin-bottom:16px;
+  }
+  .ticket:before, .ticket:after{
+    content:''; position:absolute; top:50%; transform:translateY(-50%);
+    width:20px; height:20px; background:var(--plum-950); border-radius:50%;
+  }
+  .ticket:before{left:-10px;} .ticket:after{right:-10px;}
+  .ticket-dash{border-top:2px dashed rgba(36,18,38,.25); margin:14px -20px;}
+  .result-banner{
+    text-align:center; padding:20px; border-radius:14px; margin-bottom:16px;
+    background:linear-gradient(135deg, var(--teal-500), #2b6e60);
+  }
+  .result-banner .prize-won{font-family:var(--font-display); font-weight:900; font-size:26px; margin:4px 0;}
+  .code-chip{
+    display:inline-flex; align-items:center; gap:8px; background:var(--plum-950);
+    border:1px solid rgba(227,178,60,.3); border-radius:8px; padding:6px 10px; margin:4px 4px 4px 0;
+    font-size:13px; font-family:monospace;
+  }
+  .code-chip.used{opacity:.4; text-decoration:line-through;}
+  table{width:100%; border-collapse:collapse; font-size:13px;}
+  th, td{text-align:left; padding:8px 6px; border-bottom:1px solid rgba(227,178,60,.12);}
+  th{opacity:.6; font-weight:600; text-transform:uppercase; font-size:10px; letter-spacing:.06em;}
+  .msg{font-size:13px; padding:10px 12px; border-radius:10px; margin-bottom:14px;}
+  .msg.error{background:rgba(178,58,82,.2); color:#f0a3b4; border:1px solid rgba(178,58,82,.4);}
+  .msg.ok{background:rgba(63,148,131,.2); color:#8fd4c3; border:1px solid rgba(63,148,131,.4);}
+  .small-note{font-size:11px; opacity:.55; margin-top:-6px; margin-bottom:14px; line-height:1.5;}
+  textarea{
+    width:100%; min-height:90px; background:var(--plum-950); color:var(--gold-300);
+    border:1px solid rgba(227,178,60,.25); border-radius:10px; padding:10px; font-family:monospace; font-size:11px;
+  }
+  .center{text-align:center;}
+  .hidden{display:none !important;}
+</style>
+</head>
+<body>
+<div class="app">
+  <p class="eyebrow">Undian Kupon Emas</p>
+  <h1 class="title">Lucky Spin</h1>
+
+  <div class="nav">
+    <button id="nav-spin" class="active">Putar</button>
+    <button id="nav-admin">Panel Admin</button>
+  </div>
+
+  <div id="msgbox"></div>
+
+  <!-- SPIN VIEW -->
+  <div id="view-spin">
+    <div id="spin-entry">
+      <div class="ticket">
+        <p class="eyebrow" style="text-align:left; margin-bottom:8px;">Masukkan Kode Undian</p>
+        <input type="text" id="code-input" placeholder="Contoh: LUCK-4821" style="text-transform:uppercase; margin-bottom:0;">
+        <div class="ticket-dash"></div>
+        <input type="text" id="name-input" placeholder="Nama kamu (opsional)" style="margin-bottom:0;">
+      </div>
+      <button class="btn btn-primary" id="btn-check-code">Cek &amp; Putar Roda</button>
+    </div>
+
+    <div id="spin-wheel-area" class="hidden">
+      <div class="wheel-wrap">
+        <div class="pointer"></div>
+        <div class="wheel" id="wheel"></div>
+        <div class="hub"></div>
+      </div>
+      <button class="btn btn-primary" id="btn-spin-now">Putar Sekarang!</button>
+    </div>
+
+    <div id="spin-result" class="hidden">
+      <div class="result-banner">
+        <div style="font-size:13px; opacity:.85;">Selamat!</div>
+        <div class="prize-won" id="result-prize-name">-</div>
+      </div>
+      <button class="btn btn-secondary" id="btn-spin-again">Kembali</button>
+    </div>
+  </div>
+
+  <!-- ADMIN LOGIN -->
+  <div id="view-admin-login" class="hidden">
+    <div class="card">
+      <h2>Masuk sebagai Admin</h2>
+      <label>PIN Admin</label>
+      <input type="password" id="admin-pin-input" placeholder="Masukkan PIN">
+      <p class="small-note">PIN default: <strong>admin123</strong>. Ganti di menu Pengaturan setelah masuk.</p>
+      <button class="btn btn-primary" id="btn-admin-login">Masuk</button>
+    </div>
+  </div>
+
+  <!-- ADMIN PANEL -->
+  <div id="view-admin" class="hidden">
+
+    <div class="card">
+      <h2>🎁 Kelola Hadiah</h2>
+      <div id="prize-list"></div>
+      <div style="margin-top:14px;">
+        <label>Nama Hadiah</label>
+        <input type="text" id="prize-name-input" placeholder="Misal: Voucher 50rb">
+        <div style="display:flex; gap:10px; align-items:flex-end;">
+          <div style="flex:1;">
+            <label>Peluang (bobot)</label>
+            <input type="number" id="prize-weight-input" value="10" min="0" style="margin-bottom:14px;">
+          </div>
+          <div style="flex:1;">
+            <label>Stok (kosongkan = ∞)</label>
+            <input type="number" id="prize-stock-input" placeholder="∞" min="0" style="margin-bottom:14px;">
+          </div>
+          <input type="color" id="prize-color-input" value="#e3b23c">
+        </div>
+        <button class="btn btn-secondary" id="btn-add-prize">+ Tambah Hadiah</button>
+      </div>
+      <p class="small-note">Bobot menentukan peluang menang. Hadiah dengan bobot lebih besar akan lebih sering keluar. Ubah kapan saja — perubahan langsung berlaku untuk putaran berikutnya.</p>
+    </div>
+
+    <div class="card">
+      <h2>🎟️ Buat Kode Undian</h2>
+      <label>Jumlah kode yang dibuat</label>
+      <input type="number" id="code-count-input" value="10" min="1" max="200">
+      <label>Hadiah untuk kode ini</label>
+      <select id="code-fixed-prize-select">
+        <option value="">🎲 Acak (sesuai peluang)</option>
+      </select>
+      <button class="btn btn-secondary" id="btn-generate-codes">Buat Kode Baru</button>
+      <p class="small-note">Pilih "Acak" supaya hasil undian mengikuti peluang di atas, atau pilih nama hadiah tertentu supaya semua kode yang dibuat kali ini <strong>dijamin</strong> dapat hadiah itu.</p>
+      <div id="code-list" style="margin-top:14px;"></div>
+    </div>
+
+    <div class="card">
+      <h2>📊 Riwayat Pemenang</h2>
+      <div id="history-list"></div>
+      <div class="btn-row" style="margin-top:12px;">
+        <button class="btn btn-secondary" id="btn-export-csv">Unduh CSV</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>🔗 Sambungkan ke Google Sheets</h2>
+      <label>URL Web App (Google Apps Script)</label>
+      <input type="text" id="webhook-input" placeholder="https://script.google.com/macros/s/.../exec">
+      <button class="btn btn-secondary" id="btn-save-webhook">Simpan Sambungan</button>
+      <p class="small-note">Setiap kali ada pemenang baru, datanya otomatis dikirim ke Google Sheets kamu. Cara membuatnya ada di pesan chat.</p>
+    </div>
+
+    <div class="card">
+      <h2>⚙️ Pengaturan</h2>
+      <label>Ganti PIN Admin</label>
+      <input type="password" id="new-pin-input" placeholder="PIN baru">
+      <button class="btn btn-secondary" id="btn-change-pin">Simpan PIN Baru</button>
+      <div style="height:6px;"></div>
+      <button class="btn btn-danger" id="btn-logout">Keluar dari Panel Admin</button>
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+const STORAGE_KEY = 'luckyspin_state_v1';
+let state = {
+  prizes: [
+    {id:'p1', name:'Voucher 20rb', weight:40, stock:null, color:'#3f9483'},
+    {id:'p2', name:'Voucher 50rb', weight:20, stock:null, color:'#e3b23c'},
+    {id:'p3', name:'Coba Lagi', weight:30, stock:null, color:'#b23a52'},
+    {id:'p4', name:'Grand Prize', weight:10, stock:5, color:'#f3d685'}
+  ],
+  codes: [],
+  history: [],
+  settings: { pin: 'admin123', webhookUrl: '' }
+};
+let isAdmin = false;
+
+function uid(){ return Math.random().toString(36).slice(2,9); }
+
+async function loadState(){
+  try{
+    const res = await fetch('/api/state');
+    if(res.ok){
+      const data = await res.json();
+      if(data && Array.isArray(data.prizes)){ state = data; }
+    }
+  }catch(e){ /* offline atau belum ada data — pakai default */ }
+}
+async function saveState(){
+  try{
+    const res = await fetch('/api/state', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify(state)
+    });
+    if(!res.ok) throw new Error('save failed');
+  }catch(e){ showMsg('Gagal menyimpan data ke server. Cek koneksi internet.', 'error'); }
+}
+
+function showMsg(text, type){
+  const box = document.getElementById('msgbox');
+  box.innerHTML = `<div class="msg ${type}">${text}</div>`;
+  setTimeout(()=>{ box.innerHTML=''; }, 4000);
+}
+
+// ---------- NAV ----------
+document.getElementById('nav-spin').onclick = ()=> switchView('spin');
+document.getElementById('nav-admin').onclick = ()=> switchView(isAdmin ? 'admin' : 'admin-login');
+
+async function switchView(view){
+  document.getElementById('view-spin').classList.toggle('hidden', view!=='spin');
+  document.getElementById('view-admin-login').classList.toggle('hidden', view!=='admin-login');
+  document.getElementById('view-admin').classList.toggle('hidden', view!=='admin');
+  document.getElementById('nav-spin').classList.toggle('active', view==='spin');
+  document.getElementById('nav-admin').classList.toggle('active', view==='admin'||view==='admin-login');
+  if(view==='admin'){ await loadState(); renderAdmin(); }
+}
+
+// ---------- ADMIN LOGIN ----------
+document.getElementById('btn-admin-login').onclick = ()=>{
+  const pin = document.getElementById('admin-pin-input').value;
+  if(pin === state.settings.pin){
+    isAdmin = true;
+    document.getElementById('admin-pin-input').value='';
+    switchView('admin');
+  } else {
+    showMsg('PIN salah. Coba lagi.', 'error');
+  }
+};
+document.getElementById('btn-logout').onclick = ()=>{
+  isAdmin = false;
+  switchView('spin');
+};
+
+// ---------- PRIZES ----------
+function renderPrizes(){
+  const list = document.getElementById('prize-list');
+  if(state.prizes.length===0){ list.innerHTML = '<div class="empty">Belum ada hadiah. Tambahkan di bawah.</div>'; return; }
+  list.innerHTML = state.prizes.map(p=>`
+    <div class="prize-row">
+      <div class="swatch" style="background:${p.color}"></div>
+      <div class="prize-name">${escapeHtml(p.name)}</div>
+      <div class="prize-meta">bobot ${p.weight} · stok ${p.stock===null?'∞':p.stock}</div>
+      <button class="icon-btn" data-id="${p.id}" data-action="del">✕</button>
+    </div>
+  `).join('');
+  list.querySelectorAll('[data-action=del]').forEach(btn=>{
+    btn.onclick = ()=>{
+      state.prizes = state.prizes.filter(p=>p.id!==btn.dataset.id);
+      saveState(); renderPrizes(); populatePrizeSelect();
+    };
+  });
+  populatePrizeSelect();
+}
+
+function populatePrizeSelect(){
+  const sel = document.getElementById('code-fixed-prize-select');
+  const current = sel.value;
+  sel.innerHTML = '<option value="">🎲 Acak (sesuai peluang)</option>' +
+    state.prizes.map(p=>`<option value="${p.id}">${escapeHtml(p.name)}</option>`).join('');
+  if([...sel.options].some(o=>o.value===current)) sel.value = current;
+}
+document.getElementById('btn-add-prize').onclick = ()=>{
+  const name = document.getElementById('prize-name-input').value.trim();
+  const weight = parseFloat(document.getElementById('prize-weight-input').value) || 0;
+  const stockRaw = document.getElementById('prize-stock-input').value;
+  const stock = stockRaw === '' ? null : parseInt(stockRaw);
+  const color = document.getElementById('prize-color-input').value;
+  if(!name){ showMsg('Nama hadiah wajib diisi.', 'error'); return; }
+  if(weight<=0){ showMsg('Bobot peluang harus lebih dari 0.', 'error'); return; }
+  state.prizes.push({id:uid(), name, weight, stock, color});
+  document.getElementById('prize-name-input').value='';
+  document.getElementById('prize-weight-input').value='10';
+  document.getElementById('prize-stock-input').value='';
+  saveState(); renderPrizes();
+  showMsg('Hadiah ditambahkan.', 'ok');
+};
+
+// ---------- CODES ----------
+function genCode(){
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let s='';
+  for(let i=0;i<4;i++) s += chars[Math.floor(Math.random()*chars.length)];
+  return 'LUCK-'+s;
+}
+document.getElementById('btn-generate-codes').onclick = ()=>{
+  const count = Math.min(200, Math.max(1, parseInt(document.getElementById('code-count-input').value)||1));
+  const fixedPrizeId = document.getElementById('code-fixed-prize-select').value || null;
+  const existing = new Set(state.codes.map(c=>c.code));
+  let made=0, attempts=0;
+  while(made<count && attempts<count*20){
+    attempts++;
+    const code = genCode();
+    if(existing.has(code)) continue;
+    existing.add(code);
+    state.codes.push({code, used:false, createdAt:Date.now(), fixedPrizeId});
+    made++;
+  }
+  saveState(); renderCodes();
+  const prizeLabel = fixedPrizeId ? (state.prizes.find(p=>p.id===fixedPrizeId)||{}).name : 'acak';
+  showMsg(`${made} kode baru dibuat (hadiah: ${prizeLabel}).`, 'ok');
+};
+function renderCodes(){
+  const list = document.getElementById('code-list');
+  if(state.codes.length===0){ list.innerHTML = '<div class="empty">Belum ada kode. Buat di atas.</div>'; return; }
+  const recent = [...state.codes].sort((a,b)=>b.createdAt-a.createdAt).slice(0,40);
+  const prizeOptions = (selectedId)=>{
+    return '<option value="">🎲 Acak</option>' + state.prizes.map(p=>
+      `<option value="${p.id}" ${p.id===selectedId?'selected':''}>${escapeHtml(p.name)}</option>`
+    ).join('');
+  };
+  list.innerHTML = `<table><thead><tr><th>Kode</th><th>Status</th><th>Hadiah</th><th></th></tr></thead><tbody>
+    ${recent.map(c=>`
+      <tr>
+        <td style="font-family:monospace;">${c.code}</td>
+        <td>${c.used ? '✅ Terpakai' : '⏳ Belum'}</td>
+        <td>
+          ${c.used
+            ? escapeHtml(c.prize||'-')
+            : `<select data-code="${c.code}" class="code-prize-select" style="background:var(--plum-950); color:var(--cream-100); border:1px solid rgba(227,178,60,.25); border-radius:6px; padding:4px 6px; font-size:12px;">${prizeOptions(c.fixedPrizeId)}</select>`
+          }
+        </td>
+        <td>${c.used ? '' : `<button class="icon-btn" data-del="${c.code}">✕</button>`}</td>
+      </tr>
+    `).join('')}
+  </tbody></table>`;
+  if(state.codes.length>40){
+    list.innerHTML += `<div class="small-note" style="margin-top:8px;">Menampilkan 40 kode terbaru dari ${state.codes.length} total.</div>`;
+  }
+  list.querySelectorAll('.code-prize-select').forEach(sel=>{
+    sel.onchange = ()=>{
+      const c = state.codes.find(c=>c.code===sel.dataset.code);
+      if(c){ c.fixedPrizeId = sel.value || null; saveState(); }
+    };
+  });
+  list.querySelectorAll('[data-del]').forEach(btn=>{
+    btn.onclick = ()=>{
+      state.codes = state.codes.filter(c=>c.code!==btn.dataset.del);
+      saveState(); renderCodes();
+    };
+  });
+}
+
+// ---------- SPIN FLOW ----------
+let pendingCode = null;
+let pendingPrize = null;
+
+document.getElementById('btn-check-code').onclick = async ()=>{
+  const codeVal = document.getElementById('code-input').value.trim().toUpperCase();
+  if(!codeVal){ showMsg('Masukkan kode undian terlebih dahulu.', 'error'); return; }
+  const btnCheck = document.getElementById('btn-check-code');
+  btnCheck.disabled = true;
+  await loadState();
+  btnCheck.disabled = false;
+  const entry = state.codes.find(c=>c.code===codeVal);
+  if(!entry){ showMsg('Kode tidak ditemukan.', 'error'); return; }
+  if(entry.used){ showMsg('Kode ini sudah pernah dipakai.', 'error'); return; }
+  const activePrizes = state.prizes.filter(p=> p.stock===null || p.stock>0);
+  if(activePrizes.length===0){ showMsg('Stok hadiah sedang habis. Hubungi penyelenggara.', 'error'); return; }
+  pendingCode = entry;
+  drawWheel(activePrizes);
+  document.getElementById('spin-entry').classList.add('hidden');
+  document.getElementById('spin-wheel-area').classList.remove('hidden');
+};
+
+function pickWeighted(prizes){
+  const total = prizes.reduce((s,p)=>s+p.weight,0);
+  let r = Math.random()*total;
+  for(const p of prizes){
+    if(r < p.weight) return p;
+    r -= p.weight;
+  }
+  return prizes[prizes.length-1];
+}
+
+let wheelSegments = [];
+function drawWheel(prizes){
+  wheelSegments = prizes;
+  const total = prizes.reduce((s,p)=>s+p.weight,0);
+  let acc = 0;
+  const stops = [];
+  prizes.forEach(p=>{
+    const start = acc/total*360;
+    acc += p.weight;
+    const end = acc/total*360;
+    stops.push(`${p.color} ${start}deg ${end}deg`);
+  });
+  const wheel = document.getElementById('wheel');
+  wheel.style.background = `conic-gradient(${stops.join(',')})`;
+  wheel.querySelectorAll('.wheel-label').forEach(el=>el.remove());
+  acc = 0;
+  prizes.forEach(p=>{
+    const mid = (acc + p.weight/2)/total*360;
+    acc += p.weight;
+    const label = document.createElement('div');
+    label.className='wheel-label';
+    label.style.transform = `translateX(-50%) rotate(${mid}deg)`;
+    label.textContent = p.name;
+    wheel.appendChild(label);
+  });
+  wheel.style.transition='none';
+  wheel.style.transform='rotate(0deg)';
+}
+
+document.getElementById('btn-spin-now').onclick = ()=>{
+  const btn = document.getElementById('btn-spin-now');
+  btn.disabled = true;
+  let winner = null;
+  if(pendingCode.fixedPrizeId){
+    const fixed = wheelSegments.find(p=>p.id===pendingCode.fixedPrizeId);
+    if(fixed) winner = fixed;
+  }
+  if(!winner) winner = pickWeighted(wheelSegments);
+  pendingPrize = winner;
+  const total = wheelSegments.reduce((s,p)=>s+p.weight,0);
+  let acc = 0;
+  for(const p of wheelSegments){
+    if(p.id===winner.id){ acc += p.weight/2; break; }
+    acc += p.weight;
+  }
+  const targetAngleInSegment = acc/total*360;
+  const spins = 5*360;
+  const finalRotation = spins + (360 - targetAngleInSegment);
+  const wheel = document.getElementById('wheel');
+  wheel.style.transition='transform 4.5s cubic-bezier(.17,.85,.15,1)';
+  requestAnimationFrame(()=>{
+    wheel.style.transform = `rotate(${finalRotation}deg)`;
+  });
+  setTimeout(()=> finishSpin(), 4700);
+};
+
+async function finishSpin(){
+  const winner = pendingPrize;
+  const codeEntry = pendingCode;
+  const name = document.getElementById('name-input').value.trim();
+
+  codeEntry.used = true;
+  codeEntry.prize = winner.name;
+  codeEntry.usedAt = Date.now();
+  codeEntry.name = name;
+
+  if(winner.stock !== null){
+    const prizeRef = state.prizes.find(p=>p.id===winner.id);
+    if(prizeRef) prizeRef.stock = Math.max(0, prizeRef.stock - 1);
+  }
+
+  const record = { code: codeEntry.code, prize: winner.name, name: name, timestamp: new Date().toISOString() };
+  state.history.unshift(record);
+  await saveState();
+
+  document.getElementById('result-prize-name').textContent = winner.name;
+  document.getElementById('spin-wheel-area').classList.add('hidden');
+  document.getElementById('spin-result').classList.remove('hidden');
+  document.getElementById('btn-spin-now').disabled = false;
+
+  sendToWebhook(record);
+}
+
+document.getElementById('btn-spin-again').onclick = ()=>{
+  document.getElementById('spin-result').classList.add('hidden');
+  document.getElementById('spin-entry').classList.remove('hidden');
+  document.getElementById('code-input').value='';
+  document.getElementById('name-input').value='';
+  pendingCode=null; pendingPrize=null;
+};
+
+// ---------- HISTORY ----------
+function renderHistory(){
+  const list = document.getElementById('history-list');
+  if(state.history.length===0){ list.innerHTML = '<div class="empty">Belum ada pemenang.</div>'; return; }
+  const rows = state.history.slice(0,50).map(h=>`
+    <tr>
+      <td>${escapeHtml(h.code)}</td>
+      <td>${escapeHtml(h.prize)}</td>
+      <td>${escapeHtml(h.name||'-')}</td>
+      <td>${new Date(h.timestamp).toLocaleString('id-ID')}</td>
+    </tr>
+  `).join('');
+  list.innerHTML = `<table><thead><tr><th>Kode</th><th>Hadiah</th><th>Nama</th><th>Waktu</th></tr></thead><tbody>${rows}</tbody></table>`;
+}
+document.getElementById('btn-export-csv').onclick = ()=>{
+  if(state.history.length===0){ showMsg('Belum ada data untuk diunduh.', 'error'); return; }
+  const header = 'Kode,Hadiah,Nama,Waktu\n';
+  const rows = state.history.map(h=> [h.code, h.prize, h.name||'', h.timestamp].map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const blob = new Blob([header+rows], {type:'text/csv;charset=utf-8;'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'lucky-spin-riwayat.csv';
+  a.click();
+  URL.revokeObjectURL(url);
+};
+
+// ---------- GOOGLE SHEETS WEBHOOK ----------
+document.getElementById('btn-save-webhook').onclick = async ()=>{
+  state.settings.webhookUrl = document.getElementById('webhook-input').value.trim();
+  await saveState();
+  showMsg('Sambungan Google Sheets disimpan.', 'ok');
+};
+function sendToWebhook(record){
+  const url = state.settings.webhookUrl;
+  if(!url) return;
+  fetch(url, {
+    method:'POST',
+    mode:'no-cors',
+    headers:{'Content-Type':'text/plain'},
+    body: JSON.stringify(record)
+  }).catch(()=>{ /* silent — no-cors gives no readable response anyway */ });
+}
+
+// ---------- PIN CHANGE ----------
+document.getElementById('btn-change-pin').onclick = async ()=>{
+  const newPin = document.getElementById('new-pin-input').value.trim();
+  if(!newPin || newPin.length<4){ showMsg('PIN minimal 4 karakter.', 'error'); return; }
+  state.settings.pin = newPin;
+  document.getElementById('new-pin-input').value='';
+  await saveState();
+  showMsg('PIN berhasil diganti.', 'ok');
+};
+
+function escapeHtml(str){
+  const d = document.createElement('div');
+  d.textContent = str;
+  return d.innerHTML;
+}
+
+function renderAdmin(){
+  renderPrizes();
+  renderCodes();
+  renderHistory();
+  document.getElementById('webhook-input').value = state.settings.webhookUrl || '';
+}
+
+// ---------- INIT ----------
+(async function init(){
+  await loadState();
+  switchView('spin');
+})();
+</script>
+</body>
+</html>
