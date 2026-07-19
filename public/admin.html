@@ -52,13 +52,25 @@
   .pw-wrap{position:relative; margin-bottom:16px;}
   .pw-wrap input{
     width:100%; padding:13px 44px 13px 14px; border-radius:12px; border:1.5px solid rgba(255,255,255,.1);
-    background:rgba(255,255,255,.05); color:#f1f5f9; font-family:var(--font-body); font-size:15px;
+    background:rgba(255,255,255,.05) !important; color:#f1f5f9 !important; font-family:var(--font-body); font-size:15px;
+    caret-color:#f1f5f9;
   }
-  .pw-wrap input::placeholder{color:#5b6885;}
-  .pw-wrap input:focus{outline:none; border-color:#38bdf8; background:rgba(255,255,255,.08);}
+  .pw-wrap input::placeholder{color:#5b6885 !important;}
+  .pw-wrap input:focus{outline:none; border-color:#38bdf8; background:rgba(255,255,255,.08) !important;}
   .pw-wrap input[type="text"]{
     -webkit-text-security:none; text-security:none;
     letter-spacing:normal; font-weight:400; color:#f1f5f9;
+  }
+  /* Paksa warna autofill browser (Chrome/Safari) ikut tema gelap login */
+  .pw-wrap input:-webkit-autofill,
+  .pw-wrap input:-webkit-autofill:hover,
+  .pw-wrap input:-webkit-autofill:focus,
+  .pw-wrap input:-webkit-autofill:active{
+    -webkit-text-fill-color:#f1f5f9 !important;
+    -webkit-box-shadow:0 0 0px 1000px rgba(255,255,255,.06) inset !important;
+    box-shadow:0 0 0px 1000px rgba(255,255,255,.06) inset !important;
+    caret-color:#f1f5f9;
+    transition:background-color 9999s ease-in-out 0s;
   }
   .eye-btn{
     position:absolute; right:6px; top:50%; transform:translateY(-50%); background:none; border:none;
@@ -217,6 +229,17 @@
   .field-eye-wrap input[type="text"]{
     -webkit-text-security:none; text-security:none;
     letter-spacing:normal; font-weight:400;
+  }
+  /* Paksa warna autofill browser ikut tema terang panel (Pengaturan, dll) */
+  .field-eye-wrap input:-webkit-autofill,
+  .field-eye-wrap input:-webkit-autofill:hover,
+  .field-eye-wrap input:-webkit-autofill:focus,
+  .field-eye-wrap input:-webkit-autofill:active{
+    -webkit-text-fill-color:#1c2433 !important;
+    -webkit-box-shadow:0 0 0px 1000px #f5f7fb inset !important;
+    box-shadow:0 0 0px 1000px #f5f7fb inset !important;
+    caret-color:#1c2433;
+    transition:background-color 9999s ease-in-out 0s;
   }
   .eye-btn-light{
     position:absolute; right:6px; top:11px; background:none; border:none;
