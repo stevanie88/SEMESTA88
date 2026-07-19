@@ -151,9 +151,11 @@
   }
   .card h2{font-size:16.5px; margin:0 0 4px; font-weight:700; display:flex; align-items:center; gap:8px;}
   .card .card-sub{font-size:12.5px; color:var(--text-lo); margin:0 0 18px; line-height:1.5;}
+  .card-head-row{display:flex; align-items:flex-start; justify-content:space-between; gap:10px; flex-wrap:wrap;}
+  .card-head-row .btn-danger{width:auto; padding:9px 14px; font-size:12.5px;}
 
   label{font-size:12px; font-weight:600; color:var(--text-lo); display:block; margin-bottom:6px;}
-  input[type=text], input[type=number], input[type=password]{
+  input[type=text], input[type=number], input[type=password], input[type=email]{
     width:100%; padding:11px 12px; border-radius:10px; border:1.5px solid var(--border);
     background:var(--surface-alt); color:var(--text-hi); font-family:var(--font-body); font-size:14.5px; margin-bottom:14px;
   }
@@ -204,6 +206,15 @@
 
   .divider{height:1px; background:var(--border); margin:20px 0;}
   .section-label{font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:var(--primary-dark); margin:0 0 12px;}
+
+  /* ---------- PASSWORD EYE (LIGHT CONTEXT, e.g. Pengaturan) ---------- */
+  .field-eye-wrap{position:relative;}
+  .field-eye-wrap input{padding-right:44px;}
+  .eye-btn-light{
+    position:absolute; right:6px; top:11px; background:none; border:none;
+    cursor:pointer; padding:8px; color:var(--text-faint); display:flex;
+  }
+  .eye-btn-light:hover{color:var(--primary);}
 </style>
 </head>
 <body>
@@ -221,11 +232,11 @@
       <p class="sub">Undian Kupon Emas — Panel Admin</p>
       <label class="field-label">Email</label>
       <div class="pw-wrap">
-        <input type="email" id="admin-email-login-input" placeholder="hatihatilho12@gmail.com" autocomplete="username">
+        <input type="email" id="admin-email-login-input" placeholder="Masukkan email" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
       </div>
       <label class="field-label">Password</label>
       <div class="pw-wrap">
-        <input type="password" id="admin-password-input" placeholder="Masukkan password" autocomplete="current-password">
+        <input type="password" id="admin-password-input" placeholder="Masukkan password" autocomplete="new-password">
         <button type="button" class="eye-btn" id="btn-toggle-password" aria-label="Lihat password">
           <svg id="eye-icon-password" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
         </button>
@@ -243,8 +254,13 @@
       <h2>Verifikasi PIN</h2>
       <p class="sub">Masukkan 6 digit PIN admin kamu.</p>
       <label class="field-label">PIN Admin</label>
-      <input type="password" id="admin-pin-input" class="otp-input" maxlength="6" inputmode="numeric" placeholder="------">
-      <button class="btn btn-primary" id="btn-verify-pin" style="margin-top:14px;">Verifikasi &amp; Masuk</button>
+      <div class="pw-wrap">
+        <input type="password" id="admin-pin-input" class="otp-input" maxlength="6" inputmode="numeric" placeholder="------">
+        <button type="button" class="eye-btn" id="btn-toggle-pin2" aria-label="Lihat PIN">
+          <svg id="eye-icon-pin2" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
+        </button>
+      </div>
+      <button class="btn btn-primary" id="btn-verify-pin" style="margin-top:4px;">Verifikasi &amp; Masuk</button>
     </div>
 
     <!-- STEP: LUPA PASSWORD -->
@@ -254,7 +270,7 @@
       <p class="sub">Masukkan email admin kamu. Link reset password akan dikirim ke email tersebut.</p>
       <label class="field-label">Email</label>
       <div class="pw-wrap">
-        <input type="email" id="forgot-email-input" placeholder="hatihatilho12@gmail.com">
+        <input type="email" id="forgot-email-input" placeholder="Masukkan email" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
       </div>
       <button class="btn btn-primary" id="btn-send-reset-link">Kirim Link Reset</button>
     </div>
@@ -265,7 +281,10 @@
       <p class="sub">Masukkan password baru untuk akun admin kamu.</p>
       <label class="field-label">Password Baru</label>
       <div class="pw-wrap">
-        <input type="password" id="reset-new-password-input" placeholder="Minimal 6 karakter">
+        <input type="password" id="reset-new-password-input" placeholder="Minimal 6 karakter" autocomplete="new-password">
+        <button type="button" class="eye-btn" id="btn-toggle-reset-pw" aria-label="Lihat password">
+          <svg id="eye-icon-reset-pw" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
+        </button>
       </div>
       <button class="btn btn-primary" id="btn-submit-reset-password">Simpan Password Baru</button>
     </div>
@@ -277,7 +296,7 @@
       <p class="sub">Dipakai kalau password &amp; PIN dua-duanya lupa. Setiap kode hanya bisa dipakai sekali.</p>
       <label class="field-label">Email</label>
       <div class="pw-wrap">
-        <input type="email" id="recovery-email-input" placeholder="hatihatilho12@gmail.com">
+        <input type="email" id="recovery-email-input" placeholder="Masukkan email" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
       </div>
       <label class="field-label">Recovery Code</label>
       <div class="pw-wrap">
@@ -377,7 +396,10 @@
           <p class="small-note">Pilih "Acak" supaya hasil undian mengikuti peluang di atas, atau pilih hadiah tertentu supaya semua kode kali ini <strong>dijamin</strong> dapat hadiah itu.</p>
         </div>
         <div class="card">
-          <h2>Daftar Kode</h2>
+          <div class="card-head-row">
+            <h2>Daftar Kode</h2>
+            <button class="btn btn-danger" id="btn-delete-all-codes">🗑 Hapus Semua Kode</button>
+          </div>
           <div id="code-list"></div>
         </div>
       </section>
@@ -409,9 +431,19 @@
           <h2>🔑 Ganti Password</h2>
           <p class="card-sub">Butuh password saat ini untuk konfirmasi.</p>
           <label>Password Saat Ini</label>
-          <input type="password" id="current-password-for-pw-input" placeholder="Password saat ini">
+          <div class="field-eye-wrap">
+            <input type="password" id="current-password-for-pw-input" placeholder="Password saat ini" autocomplete="off">
+            <button type="button" class="eye-btn-light" id="btn-toggle-pw1" aria-label="Lihat password">
+              <svg id="eye-icon-pw1" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+          </div>
           <label>Password Baru</label>
-          <input type="password" id="new-password-input" placeholder="Minimal 6 karakter">
+          <div class="field-eye-wrap">
+            <input type="password" id="new-password-input" placeholder="Minimal 6 karakter" autocomplete="off">
+            <button type="button" class="eye-btn-light" id="btn-toggle-pw2" aria-label="Lihat password">
+              <svg id="eye-icon-pw2" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+          </div>
           <button class="btn btn-secondary" id="btn-change-password">Simpan Password Baru</button>
         </div>
 
@@ -419,7 +451,12 @@
           <h2>🔢 Ganti PIN</h2>
           <p class="card-sub">Butuh password saat ini untuk konfirmasi.</p>
           <label>Password Saat Ini</label>
-          <input type="password" id="current-password-for-pin-input" placeholder="Password saat ini">
+          <div class="field-eye-wrap">
+            <input type="password" id="current-password-for-pin-input" placeholder="Password saat ini" autocomplete="off">
+            <button type="button" class="eye-btn-light" id="btn-toggle-pw3" aria-label="Lihat password">
+              <svg id="eye-icon-pw3" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+          </div>
           <label>PIN Baru (6 digit)</label>
           <input type="text" id="new-pin-input" maxlength="6" inputmode="numeric" placeholder="6 digit angka">
           <button class="btn btn-secondary" id="btn-change-pin">Simpan PIN Baru</button>
@@ -430,7 +467,12 @@
           <p class="card-sub">5 kode cadangan sekali-pakai untuk masuk kalau password &amp; PIN dua-duanya lupa. Kode lama akan tidak berlaku begitu kamu buat yang baru — simpan di tempat aman (password manager / catatan offline), kode ini <strong>tidak</strong> akan ditampilkan lagi setelah ini.</p>
           <p class="small-note" id="recovery-codes-remaining"></p>
           <label>Password Saat Ini</label>
-          <input type="password" id="current-password-for-recovery-input" placeholder="Password saat ini">
+          <div class="field-eye-wrap">
+            <input type="password" id="current-password-for-recovery-input" placeholder="Password saat ini" autocomplete="off">
+            <button type="button" class="eye-btn-light" id="btn-toggle-pw4" aria-label="Lihat password">
+              <svg id="eye-icon-pw4" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+          </div>
           <button class="btn btn-secondary" id="btn-generate-recovery">Buat 5 Recovery Code Baru</button>
           <div id="recovery-codes-display"></div>
         </div>
@@ -483,7 +525,6 @@ function escapeHtml(str){
 
 // ---------- SESSION / AUTO LOGIN ----------
 (async function init(){
-  // Kalau dibuka lewat link reset password (?resetToken=...), tampilkan step reset dulu
   const params = new URLSearchParams(window.location.search);
   const resetToken = params.get('resetToken');
   if(resetToken){
@@ -516,15 +557,27 @@ function showLoginStep(id){
   });
 }
 
-// ---------- PASSWORD VISIBILITY TOGGLE ----------
-document.getElementById('btn-toggle-password').onclick = ()=>{
-  const input = document.getElementById('admin-password-input');
-  const showing = input.type === 'text';
-  input.type = showing ? 'password' : 'text';
-  document.getElementById('eye-icon-password').innerHTML = showing
-    ? '<path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/>'
-    : '<path d="M17.94 17.94A10.94 10.94 0 0112 19c-7 0-11-7-11-7a21.6 21.6 0 015.06-6.06M9.9 4.24A10.94 10.94 0 0112 4c7 0 11 7 11 7a21.6 21.6 0 01-2.16 3.19M14.12 14.12a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>';
-};
+// ---------- PASSWORD VISIBILITY TOGGLE (generik, dipakai semua field password) ----------
+function setupEyeToggle(btnId, inputId, iconId){
+  const btn = document.getElementById(btnId);
+  if(!btn) return;
+  btn.onclick = ()=>{
+    const input = document.getElementById(inputId);
+    const icon = document.getElementById(iconId);
+    const showing = input.type === 'text';
+    input.type = showing ? 'password' : 'text';
+    icon.innerHTML = showing
+      ? '<path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/>'
+      : '<path d="M17.94 17.94A10.94 10.94 0 0112 19c-7 0-11-7-11-7a21.6 21.6 0 015.06-6.06M9.9 4.24A10.94 10.94 0 0112 4c7 0 11 7 11 7a21.6 21.6 0 01-2.16 3.19M14.12 14.12a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>';
+  };
+}
+setupEyeToggle('btn-toggle-password','admin-password-input','eye-icon-password');
+setupEyeToggle('btn-toggle-pin2','admin-pin-input','eye-icon-pin2');
+setupEyeToggle('btn-toggle-reset-pw','reset-new-password-input','eye-icon-reset-pw');
+setupEyeToggle('btn-toggle-pw1','current-password-for-pw-input','eye-icon-pw1');
+setupEyeToggle('btn-toggle-pw2','new-password-input','eye-icon-pw2');
+setupEyeToggle('btn-toggle-pw3','current-password-for-pin-input','eye-icon-pw3');
+setupEyeToggle('btn-toggle-pw4','current-password-for-recovery-input','eye-icon-pw4');
 
 // ---------- LOGIN STEP 1: Email + Password ----------
 document.getElementById('btn-admin-login').onclick = async ()=>{
@@ -652,7 +705,7 @@ document.getElementById('btn-login-recovery').onclick = async ()=>{
   }
 };
 
-// ---------- LOGOUT (tombol ada di sidebar, mobile-topnav, Pengaturan, dan pojok atas) ----------
+// ---------- LOGOUT ----------
 async function doLogout(){
   const token = localStorage.getItem(TOKEN_KEY);
   localStorage.removeItem(TOKEN_KEY);
@@ -774,6 +827,13 @@ document.getElementById('btn-generate-codes').onclick = ()=>{
   saveState(); renderCodes(); renderDashboard();
   const prizeLabel = fixedPrizeId ? (state.prizes.find(p=>p.id===fixedPrizeId)||{}).name : 'acak';
   showMsg(`${made} kode baru dibuat (hadiah: ${prizeLabel}).`, 'ok');
+};
+document.getElementById('btn-delete-all-codes').onclick = ()=>{
+  if(state.codes.length===0){ showMsg('Belum ada kode untuk dihapus.', 'error'); return; }
+  if(!confirm(`Hapus SEMUA ${state.codes.length} kode (termasuk yang sudah terpakai)? Tindakan ini tidak bisa dibatalkan.`)) return;
+  state.codes = [];
+  saveState(); renderCodes(); renderDashboard(); populatePrizeSelect();
+  showMsg('Semua kode berhasil dihapus.', 'ok');
 };
 function renderCodes(){
   const list = document.getElementById('code-list');
