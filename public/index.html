@@ -2390,7 +2390,7 @@ window.TweenMax = {
       radial-gradient(circle at 15% 0%, rgba(139,60,232,.18), transparent 45%),
       radial-gradient(circle at 100% 100%, rgba(255,224,0,.08), transparent 40%),
       linear-gradient(160deg, rgba(23,10,46,.72), rgba(23,10,46,.82) 55%, rgba(23,10,46,.72)),
-      url('https://i.postimg.cc/BQMsdnM3/image.png');
+      url('https://i.postimg.cc/FKD7f8qV/image.png');
     background-size:cover; background-position:center; background-attachment:fixed;
     background-repeat:no-repeat;
     color:var(--cream); font-family:var(--font-body);
@@ -2423,10 +2423,18 @@ window.TweenMax = {
     animation:pointerBounce 1.3s linear infinite;
   }
   @keyframes pointerBounce{ 0%,100%{transform:translateX(-50%) translateY(0);} 50%{transform:translateX(-50%) translateY(-10px);} }
+  .wheel-rgb-ring{
+    position:absolute; inset:-3px; border-radius:50%; z-index:0;
+    background:conic-gradient(from 0deg, #ff3d5a,#ff9d3d,#f3e93d,#3dff8f,#3dc8ff,#8f3dff,#ff3d5a);
+    animation:rgbSpin 3s linear infinite;
+  }
+  @keyframes rgbSpin{ from{transform:rotate(0deg);} to{transform:rotate(360deg);} }
   .wheel-outer-ring{
-    position:absolute; inset:0; border-radius:50%;
+    position:absolute; inset:0; border-radius:50%; z-index:1;
     background:conic-gradient(from 0deg, var(--yellow), var(--hejo-500), var(--yellow));
-    box-shadow:0 20px 45px rgba(0,0,0,.55);
+    box-shadow:
+      0 20px 45px rgba(0,0,0,.55),
+      0 8px 16px rgba(0,0,0,.4);
     padding:8px;
   }
   .wheel{
@@ -2439,6 +2447,39 @@ window.TweenMax = {
      position/curvature/centring is handled by the library, not CSS hacks. */
   #wheel-canvas{
     display:block; width:100%; height:100%; border-radius:50%;
+  }
+  /* glossy dome overlay: light from top-left, shade at bottom-right,
+     plus inset shadows so the flat canvas reads as a curved 3D disc */
+  .wheel::after{
+    content:''; position:absolute; inset:0; border-radius:50%;
+    pointer-events:none; z-index:5;
+    background:
+      radial-gradient(circle at 30% 18%, rgba(255,255,255,.38), transparent 38%),
+      radial-gradient(circle at 72% 88%, rgba(0,0,0,.38), transparent 48%);
+    box-shadow:
+      inset 0 10px 22px rgba(0,0,0,.35),
+      inset 0 -8px 16px rgba(0,0,0,.25),
+      inset 0 2px 4px rgba(255,255,255,.15);
+  }
+  /* chasing lights: one bulb per prize slice, flashing in sequence around
+     the rim like a classic carnival prize-wheel light chase */
+  .wheel-lights{
+    position:absolute; inset:0; z-index:2; pointer-events:none;
+  }
+  .wheel-light{
+    position:absolute; width:10px; height:10px; margin:-5px 0 0 -5px;
+    border-radius:50%;
+    background:#a8895a;
+    box-shadow:0 0 3px 1px rgba(255,255,255,.25), inset 0 0 0 1px rgba(0,0,0,.3);
+    animation-name:lightChase; animation-timing-function:linear; animation-iteration-count:infinite;
+  }
+  .wheel-light.wheel-light-inner{
+    width:7px; height:7px; margin:-3.5px 0 0 -3.5px;
+  }
+  @keyframes lightChase{
+    0%{ opacity:1; background:#fff9d6; box-shadow:0 0 10px 4px rgba(255,247,180,.95), 0 0 20px 10px rgba(255,224,0,.55); }
+    12%{ opacity:.4; background:#a8895a; box-shadow:0 0 3px 1px rgba(255,255,255,.25); }
+    100%{ opacity:.4; background:#a8895a; box-shadow:0 0 3px 1px rgba(255,255,255,.25); }
   }
   .hub{
     position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
@@ -2476,35 +2517,42 @@ window.TweenMax = {
     box-shadow:0 8px 22px rgba(0,0,0,.4);
   }
   @keyframes rgbFlow{ 0%{background-position:0% 50%;} 100%{background-position:400% 50%;} }
-  .pill-group{
-    display:flex; align-items:stretch; border-radius:999px; overflow:hidden;
-    background:var(--cream);
+
+  .entry-row{ display:flex; align-items:stretch; gap:10px; }
+  .entry-row .rgb-wrap{ flex:1; min-width:0; }
+
+  .voucher-input-wrap, .name-input-wrap{
+    border-radius:999px; overflow:hidden; background:var(--cream);
   }
-  .pill-group input[type=text]{
-    flex:1; min-width:0; border:none; outline:none; background:transparent;
+  .voucher-input-wrap input[type=text], .name-input-wrap input[type=text]{
+    width:100%; border:none; outline:none; background:transparent;
     padding:15px 18px; font-family:var(--font-body); font-size:14px; color:var(--ink);
   }
-  .pill-group input::placeholder{color:#8b8b8b;}
-  .pill-group .btn-spin-pill{
-    position:relative; overflow:hidden;
-    border:none; background:var(--hejo-500); color:#fff; font-weight:700; letter-spacing:.04em;
-    padding:0 26px; cursor:pointer; text-transform:uppercase; font-size:13px; transition:.15s;
+  .voucher-input-wrap input::placeholder, .name-input-wrap input::placeholder{color:#8b8b8b;}
+
+  /* separate circular spin button, sits beside the voucher field */
+  .rgb-wrap-circle{
+    position:relative; border-radius:50%; padding:3px; flex-shrink:0;
+    background:linear-gradient(90deg,#ff3d5a,#ff9d3d,#f3e93d,#3dff8f,#3dc8ff,#8f3dff,#ff3d5a);
+    background-size:400% 400%; animation:rgbFlow 5s linear infinite;
+    box-shadow:0 8px 22px rgba(0,0,0,.4);
   }
-  .pill-group .btn-spin-pill::after{
+  .btn-spin-circle{
+    position:relative; overflow:hidden; display:flex; align-items:center; justify-content:center;
+    width:56px; height:56px; border-radius:50%; border:none;
+    background:var(--hejo-500); color:#fff; font-weight:700; letter-spacing:.02em;
+    cursor:pointer; text-transform:uppercase; font-size:11px; transition:.15s;
+  }
+  .btn-spin-circle::after{
     content:''; position:absolute; top:0; left:-150%; width:55%; height:100%;
     background:linear-gradient(115deg, transparent, rgba(255,255,255,.75), transparent);
     transform:skewX(-20deg); animation:shineMove 2.2s ease-in-out infinite;
   }
   @keyframes shineMove{ 0%{left:-150%;} 55%{left:150%;} 100%{left:150%;} }
-  .pill-group .btn-spin-pill:hover{background:var(--hejo-600);}
-  .pill-group .btn-spin-pill:disabled{opacity:.5; cursor:not-allowed;}
+  .btn-spin-circle:hover{background:var(--hejo-600);}
+  .btn-spin-circle:disabled{opacity:.5; cursor:not-allowed;}
 
-  #name-input{
-    width:100%; margin-top:12px; border-radius:999px; border:none; outline:none;
-    padding:14px 18px; font-family:var(--font-body); font-size:14px; color:var(--ink);
-    background:rgba(255,255,255,.92);
-  }
-  #name-input::placeholder{color:#8b8b8b;}
+  .rgb-wrap-name{ margin-top:12px; }
 
   .btn-full-wrap{
     position:relative; border-radius:999px; padding:3px; margin-top:14px;
@@ -2593,11 +2641,14 @@ window.TweenMax = {
   <div class="wheel-col">
     <div class="wheel-wrap">
       <img class="pointer" src="https://i.postimg.cc/pLHGYfDV/Chat-GPT-Image-17-Jul-2026-16-51-29.png" alt="pointer">
+      <div class="wheel-rgb-ring"></div>
       <div class="wheel-outer-ring">
         <div class="wheel">
           <canvas id="wheel-canvas"></canvas>
         </div>
       </div>
+      <div class="wheel-lights" id="wheel-lights"></div>
+      <div class="wheel-lights" id="wheel-lights-inner"></div>
       <div class="hub">
         <img src="https://i.postimg.cc/FRR0VRWr/Chat-GPT-Image-Jul-17-2026-12-13-52-PM.png" alt="logo">
       </div>
@@ -2608,13 +2659,21 @@ window.TweenMax = {
 
     <div id="spin-entry" class="panel">
       <h2>Masukkan Kode Voucher</h2>
-      <div class="rgb-wrap">
-        <div class="pill-group">
-          <input type="text" id="code-input" placeholder="Kode Voucher" style="text-transform:uppercase;">
-          <button class="btn-spin-pill" id="btn-check-code">Spin</button>
+      <div class="entry-row">
+        <div class="rgb-wrap">
+          <div class="voucher-input-wrap">
+            <input type="text" id="code-input" placeholder="Kode Voucher" style="text-transform:uppercase;">
+          </div>
+        </div>
+        <div class="rgb-wrap-circle">
+          <button class="btn-spin-circle" id="btn-check-code">Spin</button>
         </div>
       </div>
-      <input type="text" id="name-input" placeholder="Nama kamu (opsional)">
+      <div class="rgb-wrap rgb-wrap-name">
+        <div class="name-input-wrap">
+          <input type="text" id="name-input" placeholder="User ID">
+        </div>
+      </div>
     </div>
 
     <div id="spin-wheel-area" class="panel hidden">
@@ -2649,17 +2708,17 @@ function showMsg(text, type){
 // default demo segments so the wheel is never plain before a code is checked
 const defaultPrizes = [
   {id:'d1', name:'Hadiah Utama', weight:1, color:'#ffe000', textColor:'#000'},
-  {id:'d2', name:'10.000',       weight:1, color:'#17b34e', textColor:'#fff'},
+  {id:'d2', name:'10.000',       weight:1, color:'#8b3ce8', textColor:'#fff'},
   {id:'d3', name:'500.000',      weight:1, color:'#ffffff', textColor:'#000'},
-  {id:'d4', name:'2.500.000',    weight:1, color:'#17b34e', textColor:'#fff'},
+  {id:'d4', name:'2.500.000',    weight:1, color:'#8b3ce8', textColor:'#fff'},
   {id:'d5', name:'Hadiah Spesial',weight:1, color:'#ffe000', textColor:'#000'},
-  {id:'d6', name:'50.000',       weight:1, color:'#17b34e', textColor:'#fff'},
+  {id:'d6', name:'50.000',       weight:1, color:'#8b3ce8', textColor:'#fff'},
   {id:'d7', name:'Grand Prize',  weight:1, color:'#ffe000', textColor:'#000'},
-  {id:'d8', name:'100.000',      weight:1, color:'#17b34e', textColor:'#fff'},
+  {id:'d8', name:'100.000',      weight:1, color:'#8b3ce8', textColor:'#fff'},
   {id:'d9', name:'1.000.000',    weight:1, color:'#ffffff', textColor:'#000'},
-  {id:'d10',name:'5.000.000',    weight:1, color:'#17b34e', textColor:'#fff'},
+  {id:'d10',name:'5.000.000',    weight:1, color:'#8b3ce8', textColor:'#fff'},
   {id:'d11',name:'250.000',      weight:1, color:'#ffffff', textColor:'#000'},
-  {id:'d12',name:'20.000',       weight:1, color:'#17b34e', textColor:'#fff'}
+  {id:'d12',name:'20.000',       weight:1, color:'#8b3ce8', textColor:'#fff'}
 ];
 window.addEventListener('DOMContentLoaded', ()=>{ buildWheel(defaultPrizes); });
 
@@ -2732,6 +2791,37 @@ function pickWeighted(prizes){
    2) auto-shrink each segment's own font so long prize names
       ("Hadiah Utama") never collide with short ones ("50.000").
 ----------------------------------------------------------------- */
+/* ---------------------------------------------------------------
+   buildWheelLights — one bulb per prize slice, fixed in place
+   (they don't spin with the canvas). Each bulb's animation-delay is
+   staggered so they flash in sequence, one after another around the
+   wheel — a classic "chasing lights" carnival-wheel effect.
+   Called twice: once for the outer rim ring, once for an inner ring
+   closer to the hub.
+----------------------------------------------------------------- */
+function buildWheelLights(n, containerId, radiusPercent, extraClass){
+  const container = document.getElementById(containerId);
+  container.innerHTML = '';
+
+  const perLightInterval = 0.18; // seconds between one bulb lighting and the next
+  const totalCycle = n * perLightInterval;
+
+  for(let i=0; i<n; i++){
+    const angleDeg = (i + 0.5) * (360/n);
+    const rad = angleDeg * Math.PI/180;
+    const x = 50 + radiusPercent * Math.sin(rad);
+    const y = 50 - radiusPercent * Math.cos(rad);
+
+    const bulb = document.createElement('div');
+    bulb.className = extraClass ? 'wheel-light ' + extraClass : 'wheel-light';
+    bulb.style.left = x + '%';
+    bulb.style.top = y + '%';
+    bulb.style.animationDuration = totalCycle + 's';
+    bulb.style.animationDelay = (i * perLightInterval) + 's';
+    container.appendChild(bulb);
+  }
+}
+
 function buildWheel(prizes){
   const canvas = document.getElementById('wheel-canvas');
   const box = canvas.parentElement;
@@ -2740,6 +2830,9 @@ function buildWheel(prizes){
   canvas.height = size;
 
   const n = prizes.length;
+  buildWheelLights(n, 'wheel-lights', 48);
+  buildWheelLights(n, 'wheel-lights-inner', 20, 'wheel-light-inner');
+
   const outerRadius = size/2 - 2;
   const innerRadius = size * 0.14; // stays clear of the center hub overlay
 
@@ -2775,7 +2868,7 @@ function buildWheel(prizes){
     innerRadius: innerRadius,
     textFontFamily: "'Poppins', sans-serif",
     textFontWeight: '700',
-    textOrientation: 'curved',
+    textOrientation: 'horizontal',
     textAlignment: 'center',
     textMargin: 3,
     strokeStyle: 'rgba(0,0,0,0.15)',
