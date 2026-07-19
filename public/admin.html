@@ -56,6 +56,10 @@
   }
   .pw-wrap input::placeholder{color:#5b6885;}
   .pw-wrap input:focus{outline:none; border-color:#38bdf8; background:rgba(255,255,255,.08);}
+  .pw-wrap input[type="text"]{
+    -webkit-text-security:none; text-security:none;
+    letter-spacing:normal; font-weight:400; color:#f1f5f9;
+  }
   .eye-btn{
     position:absolute; right:6px; top:50%; transform:translateY(-50%); background:none; border:none;
     cursor:pointer; padding:8px; color:#5b6885; display:flex;
@@ -210,6 +214,10 @@
   /* ---------- PASSWORD EYE (LIGHT CONTEXT, e.g. Pengaturan) ---------- */
   .field-eye-wrap{position:relative;}
   .field-eye-wrap input{padding-right:44px;}
+  .field-eye-wrap input[type="text"]{
+    -webkit-text-security:none; text-security:none;
+    letter-spacing:normal; font-weight:400;
+  }
   .eye-btn-light{
     position:absolute; right:6px; top:11px; background:none; border:none;
     cursor:pointer; padding:8px; color:var(--text-faint); display:flex;
